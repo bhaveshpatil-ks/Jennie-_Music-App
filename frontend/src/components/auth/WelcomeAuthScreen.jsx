@@ -1,18 +1,13 @@
 import React, { useState } from 'react';
 import { 
   Music, 
-  Sparkles, 
   ArrowRight, 
   Lock, 
   Mail, 
   User, 
   Eye, 
   EyeOff, 
-  AlertCircle, 
-  CheckCircle2, 
-  Headphones,
-  Flame,
-  Radio
+  AlertCircle
 } from 'lucide-react';
 import { useAuthStore } from '../../store/useAuthStore';
 import { MOCK_TRACKS, getTrackCoverUrl } from '../../data/mockTracks';
@@ -100,39 +95,14 @@ export const WelcomeAuthScreen = ({ onEnterGuest }) => {
 
       {/* Main Container */}
       <main className="relative z-10 w-full max-w-5xl mx-auto px-4 sm:px-6 py-6 md:py-10 flex flex-col lg:flex-row items-center justify-between gap-10 my-auto">
-        {/* Left Column: Hero branding & value proposition */}
+        {/* Left Column: Hero branding */}
         <div className="space-y-6 max-w-lg text-center lg:text-left">
-          <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/10 text-white text-xs font-semibold backdrop-blur-md border border-white/10 shadow-sm">
-            <Sparkles size={14} className="text-amber-400" />
-            <span>Official High-Fidelity Music Streaming</span>
-          </div>
-
           <h1 className="text-4xl sm:text-5xl lg:text-6xl font-serif font-black text-white tracking-tight leading-[1.08]">
             Millions of songs. <br />
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-white via-neutral-200 to-neutral-500">
               Free on Jennie.
             </span>
           </h1>
-
-          <p className="text-sm sm:text-base text-neutral-400 leading-relaxed">
-            Sign in to start listening. Discover India&apos;s Top 50, trending Punjabi hits, and pure Bollywood soundtracks with personalized YouTube Mix autoplay.
-          </p>
-
-          {/* Floating Music Highlights */}
-          <div className="pt-2 flex flex-wrap items-center justify-center lg:justify-start gap-2.5 text-xs text-neutral-300 font-medium">
-            <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white/[0.04] border border-white/5">
-              <Flame size={13} className="text-red-400" />
-              <span>Top 50 India</span>
-            </span>
-            <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white/[0.04] border border-white/5">
-              <Radio size={13} className="text-emerald-400" />
-              <span>YouTube Mix Autoplay</span>
-            </span>
-            <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white/[0.04] border border-white/5">
-              <Headphones size={13} className="text-cyan-400" />
-              <span>Original Posters & Audio</span>
-            </span>
-          </div>
 
           {/* Showcase Mini Posters Carousel / Grid */}
           <div className="pt-3 hidden sm:flex items-center justify-center lg:justify-start gap-2.5 overflow-hidden">
