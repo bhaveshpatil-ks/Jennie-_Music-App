@@ -229,11 +229,8 @@ tracksRouter.get('/home-feed', async (req, res) => {
 
 /**
  * GET /api/tracks/:id/recommendations
- * Algorithmic recommendations following priority order and mood continuity
- */
-/**
- * GET /api/tracks/:id/recommendations
- * Layer 3 Live Recommendation Serving: Zero YouTube API calls, 100% computed from local database.
+ * Layer 3 Zero-Quota Live Recommendation Serving:
+ * Generates continuous audio stream recommendations using local catalog and audio feature Euclidean distance.
  */
 tracksRouter.get('/:id/recommendations', async (req, res) => {
   try {
