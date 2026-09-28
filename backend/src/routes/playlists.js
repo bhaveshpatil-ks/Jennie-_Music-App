@@ -29,7 +29,7 @@ playlistsRouter.post('/', async (req, res) => {
   try {
     const rawTitle = req.body.title ? String(req.body.title).trim().slice(0, 100) : 'New Playlist';
     const rawDesc = req.body.description ? String(req.body.description).trim().slice(0, 500) : 'Personal curated music collection.';
-    const rawCover = req.body.coverUrl && typeof req.body.coverUrl === 'string' ? req.body.coverUrl.slice(0, 500) : 'https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?w=600&auto=format&fit=crop&q=80';
+    const rawCover = req.body.coverUrl && typeof req.body.coverUrl === 'string' ? req.body.coverUrl.slice(0, 500) : 'https://i.ytimg.com/vi/BddP6PYo2gs/hqdefault.jpg';
     const rawTrackIds = Array.isArray(req.body.trackIds) ? req.body.trackIds.map(String).slice(0, 500) : [];
     const rawTracks = Array.isArray(req.body.tracks) ? req.body.tracks.slice(0, 500) : [];
 

@@ -16,6 +16,7 @@ import { usePlayerStore } from '../../store/usePlayerStore';
 import { LikeButton } from '../common/LikeButton';
 import { ProgressBar } from './ProgressBar';
 import { VolumeControl } from './VolumeControl';
+import { getTrackCoverUrl } from '../../data/mockTracks';
 
 export const PlayerBar = () => {
   const currentTrack = usePlayerStore((state) => state.currentTrack);
@@ -59,7 +60,7 @@ export const PlayerBar = () => {
           >
             <div className="relative w-11 h-11 rounded-xl overflow-hidden flex-shrink-0 bg-[#222] shadow">
               <img
-                src={currentTrack.coverUrl}
+                src={getTrackCoverUrl(currentTrack)}
                 alt={`Artwork for ${currentTrack.title}`}
                 className="w-full h-full object-cover"
               />
@@ -150,7 +151,7 @@ export const PlayerBar = () => {
               className="relative w-12 h-12 rounded-lg overflow-hidden flex-shrink-0 bg-[#1A1A1A] cursor-pointer group shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white"
             >
               <img
-                src={currentTrack.coverUrl}
+                src={getTrackCoverUrl(currentTrack)}
                 alt={`Currently playing album art for ${currentTrack.title}`}
                 className="w-full h-full object-cover group-hover:scale-105 transition-transform"
               />

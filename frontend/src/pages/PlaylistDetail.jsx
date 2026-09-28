@@ -92,7 +92,9 @@ export const PlaylistDetail = ({ playlist, isGenre = false }) => {
 
   const title = playlist.title || playlist.name;
   const description = playlist.description || 'Curated music collection.';
-  const coverUrl = playlist.coverUrl;
+  const coverUrl = (playlist.coverUrl && !playlist.coverUrl.includes('unsplash.com')) 
+    ? playlist.coverUrl 
+    : (tracks[0] ? (tracks[0].coverUrl || `https://i.ytimg.com/vi/${tracks[0].youtubeId}/hqdefault.jpg`) : 'https://i.ytimg.com/vi/BddP6PYo2gs/hqdefault.jpg');
 
   return (
     <div className="space-y-6 pb-20">

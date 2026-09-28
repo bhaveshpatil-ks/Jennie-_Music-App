@@ -3,7 +3,7 @@ import { Play, Pause, MoreHorizontal, Plus, Check, ShieldCheck } from 'lucide-re
 import { usePlayerStore } from '../../store/usePlayerStore';
 import { useLibraryStore } from '../../store/useLibraryStore';
 import { LikeButton } from '../common/LikeButton';
-import { formatDuration } from '../../data/mockTracks';
+import { formatDuration, getTrackCoverUrl } from '../../data/mockTracks';
 
 export const TrackListRow = ({ track, index, queue = null, onPlay = null }) => {
   const currentTrack = usePlayerStore((state) => state.currentTrack);
@@ -111,7 +111,7 @@ export const TrackListRow = ({ track, index, queue = null, onPlay = null }) => {
       {/* Col 2: Thumbnail, Title, Artist */}
       <div className="flex items-center gap-2.5 min-w-0 pr-1">
         <img
-          src={track.coverUrl}
+          src={getTrackCoverUrl(track)}
           alt={`Cover art for ${track.title} by ${track.artist}`}
           className="w-9 h-9 sm:w-10 sm:h-10 rounded-lg object-cover flex-shrink-0 bg-[#161616] shadow-sm"
           loading="lazy"

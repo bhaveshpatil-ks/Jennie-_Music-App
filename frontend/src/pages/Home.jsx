@@ -194,7 +194,7 @@ export const Home = () => {
               className="group flex items-center gap-3.5 p-3 rounded-2xl bg-[#161616] hover:bg-[#202020] transition-all duration-200 cursor-pointer shadow-sm hover:shadow-md border border-white/5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white"
             >
               <img
-                src={mix.coverUrl}
+                src={(mix.coverUrl && !mix.coverUrl.includes('unsplash.com')) ? mix.coverUrl : 'https://i.ytimg.com/vi/BddP6PYo2gs/hqdefault.jpg'}
                 alt={`Playlist artwork for ${mix.title}`}
                 className="w-16 h-16 rounded-xl object-cover flex-shrink-0 shadow"
               />

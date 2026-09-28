@@ -114,7 +114,7 @@ tracksRouter.get('/search', async (req, res) => {
             album: t.album || `${t.artist} (Official)`,
             duration: t.duration || 180,
             audioUrl: '',
-            coverUrl: t.thumbnail || 'https://images.unsplash.com/photo-1518609878373-06d740f60d8b?w=600&auto=format&fit=crop&q=80',
+            coverUrl: t.thumbnail || `https://i.ytimg.com/vi/${t.videoId}/hqdefault.jpg`,
             genre: t.genreTags?.[0] || 'Pop / Global',
             genreTags: t.genreTags || [],
             source: 'youtube',

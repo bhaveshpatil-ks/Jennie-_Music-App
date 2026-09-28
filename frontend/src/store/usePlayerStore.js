@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import { MOCK_TRACKS } from '../data/mockTracks';
+import { MOCK_TRACKS, getTrackCoverUrl } from '../data/mockTracks';
 import { shuffleArray } from '../utils/formatters';
 import { decideNextSong, buildRecommendedQueue } from '../services/recommendationEngine';
 
@@ -259,6 +259,7 @@ export const usePlayerStore = create((set, get) => {
         ...track,
         youtubeId: youtubeId || track.youtubeId,
         source: isYouTube ? 'youtube' : (track.source || 'jamendo'),
+        coverUrl: getTrackCoverUrl(track),
       };
 
       // Evaluate single next-song decision

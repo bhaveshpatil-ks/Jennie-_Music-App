@@ -11,7 +11,7 @@ import {
   ShieldCheck
 } from 'lucide-react';
 import { usePlayerStore } from '../../store/usePlayerStore';
-import { MOCK_TRACKS } from '../../data/mockTracks';
+import { MOCK_TRACKS, getTrackCoverUrl } from '../../data/mockTracks';
 import { formatDuration } from '../../utils/formatters';
 import { LikeButton } from '../common/LikeButton';
 import { ProgressBar } from './ProgressBar';
@@ -132,7 +132,7 @@ export const FullscreenPlayer = () => {
         {/* Cover Artwork Container */}
         <div className="relative w-64 h-64 sm:w-80 sm:h-80 md:w-96 md:h-96 rounded-2xl overflow-hidden shadow-2xl mb-8 group">
           <img
-            src={currentTrack.coverUrl}
+            src={getTrackCoverUrl(currentTrack)}
             alt={`Album cover artwork for ${currentTrack.title} by ${currentTrack.artist}`}
             className={`w-full h-full object-cover transition-transform duration-700 ${
               isPlaying ? 'scale-105' : 'scale-100'
@@ -168,7 +168,7 @@ export const FullscreenPlayer = () => {
             <div className="flex items-center gap-3 min-w-0 pr-2">
               <div className="relative w-10 h-10 rounded-xl overflow-hidden flex-shrink-0 bg-neutral-800 shadow">
                 <img
-                  src={nextTrackItem.coverUrl}
+                  src={getTrackCoverUrl(nextTrackItem)}
                   alt={nextTrackItem.title}
                   className="w-full h-full object-cover group-hover:scale-105 transition-transform"
                 />

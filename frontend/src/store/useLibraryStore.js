@@ -185,7 +185,7 @@ export const useLibraryStore = create((set, get) => ({
       id: `pl-${Date.now()}`,
       title: title || 'New Playlist',
       description: description || 'Personal curated music collection.',
-      coverUrl: 'https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?w=600&auto=format&fit=crop&q=80',
+      coverUrl: 'https://i.ytimg.com/vi/BddP6PYo2gs/hqdefault.jpg',
       trackIds: [],
       tracks: [],
       createdAt: new Date().toISOString().split('T')[0],

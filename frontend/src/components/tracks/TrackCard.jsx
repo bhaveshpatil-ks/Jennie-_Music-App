@@ -3,6 +3,8 @@ import { Play, Pause } from 'lucide-react';
 import { usePlayerStore } from '../../store/usePlayerStore';
 import { LikeButton } from '../common/LikeButton';
 
+import { getTrackCoverUrl } from '../../data/mockTracks';
+
 export const TrackCard = ({ track, queue = null, showGenre = true }) => {
   const currentTrack = usePlayerStore((state) => state.currentTrack);
   const isPlaying = usePlayerStore((state) => state.isPlaying);
@@ -40,18 +42,11 @@ export const TrackCard = ({ track, queue = null, showGenre = true }) => {
       {/* Cover Image Container */}
       <div className="relative aspect-square w-full rounded-xl overflow-hidden bg-[#0C0C0C] mb-3">
         <img
-          src={track.coverUrl}
+          src={getTrackCoverUrl(track)}
           alt={`Album cover artwork for ${track.title} by ${track.artist}`}
           className="w-full h-full object-cover group-hover:scale-[1.03] transition-transform duration-700 ease-[cubic-bezier(0.16,1,0.3,1)]"
           loading="lazy"
         />
-
-        {/* CC License Badge */}
-        <div className="absolute top-2 left-2 z-10">
-          <span className="text-[10px] font-semibold text-white px-2 py-0.5 rounded-full bg-black/70 backdrop-blur-md uppercase tracking-wider">
-            {track.license || 'CC-BY'}
-          </span>
-        </div>
 
         {/* Floating Like Button */}
         <div className="absolute top-2 right-2 z-10 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
