@@ -49,6 +49,7 @@ catalogRouter.get('/status', async (req, res) => {
 /**
  * POST /api/catalog/missed-query
  * Log unfulfilled user search to drive demand-based Layer 1 discovery
+ * @param {string} req.body.query - The search query term that produced few/no results
  */
 catalogRouter.post('/missed-query', async (req, res) => {
   try {
