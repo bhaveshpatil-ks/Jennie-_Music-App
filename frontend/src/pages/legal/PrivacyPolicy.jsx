@@ -115,7 +115,6 @@ export const PrivacyPolicy = () => {
             </p>
             <ul className="list-disc list-inside space-y-1 pl-2 text-neutral-400">
               <li>Securing sign-in via Firebase Authentication (Email/Password only).</li>
-              <li>Delivering the mandatory email verification link (<code className="bg-white/10 px-1 py-0.5 rounded text-white">sendEmailVerification</code>) to verify account ownership.</li>
               <li>Detecting and mitigating unauthorized brute-force login attempts via IP rate limiting.</li>
               <li>Allowing self-service password recovery if you forget your credentials.</li>
             </ul>
@@ -206,7 +205,7 @@ export const PrivacyPolicy = () => {
             <tbody className="divide-y divide-white/5 bg-[#121214] text-neutral-300">
               <tr>
                 <td className="p-3.5 font-semibold text-white">Email Address</td>
-                <td className="p-3.5">Authenticates sign-in, sends email verification, allows password recovery, and protects against unauthorized brute-force attacks.</td>
+                <td className="p-3.5">Authenticates sign-in, allows password recovery, and protects against unauthorized brute-force attacks.</td>
                 <td className="p-3.5 text-red-300/90">Never sold, never rented, never shared with third-party marketers, zero advertising spam.</td>
               </tr>
               <tr>

@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { ChevronLeft, ChevronRight, Search, Sparkles, User, Music2, Shield, LogOut, Mail, CheckCircle2, AlertTriangle, Trash2, Sliders } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Search, Sparkles, User, Music2, Shield, LogOut, Mail, CheckCircle2, Trash2, Sliders } from 'lucide-react';
 import { useLibraryStore } from '../../store/useLibraryStore';
 import { usePlayerStore } from '../../store/usePlayerStore';
 import { useAuthStore } from '../../store/useAuthStore';
@@ -14,7 +14,7 @@ export const TopHeader = () => {
   const isPlaying = usePlayerStore((state) => state.isPlaying);
   const toggleFullscreen = usePlayerStore((state) => state.toggleFullscreen);
 
-  const { user, profile, isEmailVerified, openAuthModal, logout } = useAuthStore();
+  const { user, profile, openAuthModal, logout } = useAuthStore();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const menuRef = useRef(null);
 
@@ -174,9 +174,6 @@ export const TopHeader = () => {
               <span className="text-xs font-medium text-white max-w-[90px] truncate hidden sm:inline">
                 {displayName}
               </span>
-              {!isEmailVerified && (
-                <span className="w-2 h-2 rounded-full bg-zinc-400 animate-ping" title="Verification Pending" />
-              )}
             </button>
 
             {/* Account Popover Menu */}
@@ -211,29 +208,6 @@ export const TopHeader = () => {
                     )}
                   </div>
                 </div>
-
-                {/* Email Verification Action */}
-                {!isEmailVerified && (
-                  <div className="p-2.5 my-2 rounded-xl bg-amber-500/10 border border-amber-500/20 text-xs text-amber-300">
-                    <div className="flex items-start gap-1.5">
-                      <AlertTriangle size={14} className="shrink-0 mt-0.5" />
-                      <div>
-                        <p className="font-semibold text-[11px]">Unverified Email</p>
-                        <p className="text-[10px] text-amber-300/80">Confirm ownership to secure your playlist data.</p>
-                      </div>
-                    </div>
-                    <button
-                      type="button"
-                      onClick={() => {
-                        setIsMenuOpen(false);
-                        openAuthModal('verify_notice');
-                      }}
-                      className="mt-2 w-full py-1 text-center bg-amber-400/20 hover:bg-amber-400/30 text-amber-200 text-[11px] font-semibold rounded-lg transition-colors"
-                    >
-                      Verify Now
-                    </button>
-                  </div>
-                )}
 
                 {/* Menu items */}
                 <div className="py-1 space-y-0.5 text-xs">

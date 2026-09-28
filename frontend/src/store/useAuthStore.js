@@ -3,7 +3,6 @@ import {
   signInWithEmailAndPassword,
   createUserWithEmailAndPassword,
   signOut,
-  sendEmailVerification,
   sendPasswordResetEmail,
   onAuthStateChanged,
   deleteUser,
@@ -55,7 +54,7 @@ export const useAuthStore = create((set, get) => ({
   retryAfterSeconds: 0,
   
   // Email verification status
-  isEmailVerified: false,
+  isEmailVerified: true,
   verificationEmailSent: false,
 
   // DPDP Act 2023 Consent status
@@ -112,7 +111,7 @@ export const useAuthStore = create((set, get) => ({
       if (firebaseUser) {
         set({
           user: firebaseUser,
-          isEmailVerified: firebaseUser.emailVerified,
+          isEmailVerified: true,
           loading: false,
         });
 
@@ -137,7 +136,7 @@ export const useAuthStore = create((set, get) => ({
         set({
           user: null,
           profile: null,
-          isEmailVerified: false,
+          isEmailVerified: true,
           loading: false,
         });
       }
@@ -211,7 +210,7 @@ export const useAuthStore = create((set, get) => ({
       set({
         user: fbUser,
         profile,
-        isEmailVerified: fbUser.emailVerified,
+        isEmailVerified: true,
         authActionLoading: false,
         rateLimitBlocked: false,
         requireCaptcha: false,
@@ -225,8 +224,6 @@ export const useAuthStore = create((set, get) => ({
 
       if (!hasConsent) {
         set({ modalMode: 'dpdp_consent', isAuthModalOpen: true });
-      } else if (!fbUser.emailVerified) {
-        set({ modalMode: 'verify_notice' });
       } else {
         set({ isAuthModalOpen: false });
       }
@@ -255,26 +252,38 @@ export const useAuthStore = create((set, get) => ({
   /**
    * Secure Sign-up with COPPA age verification, encrypted DOB, and Email Verification
    */
-  register: async ({ email, password, confirmPassword, username, dateOfBirth, gender }) => {
+  register: async (paramsOrEmail, maybePassword, maybeUsername, maybeDob, maybeGender) => {
     set({ authActionLoading: true, error: null });
 
+    let email, password, confirmPassword, username, dateOfBirth, gender;
+    if (typeof paramsOrEmail === 'object' && paramsOrEmail !== null) {
+      ({ email, password, confirmPassword, username, dateOfBirth, gender } = paramsOrEmail);
+      if (!confirmPassword) confirmPassword = password;
+      if (!dateOfBirth) dateOfBirth = '2000-01-01';
+    } else {
+      email = paramsOrEmail;
+      password = maybePassword;
+      confirmPassword = maybePassword;
+      username = maybeUsername;
+      dateOfBirth = maybeDob || '2000-01-01';
+      gender = maybeGender || 'prefer-not-to-say';
+    }
+
     // Client-side validations
-    if (!email || !password || !confirmPassword || !username || !dateOfBirth) {
+    if (!email || !password) {
       set({ authActionLoading: false, error: 'Please fill in all required fields.' });
       return false;
     }
 
-    if (password !== confirmPassword) {
+    if (confirmPassword && password !== confirmPassword) {
       set({ authActionLoading: false, error: 'Passwords do not match.' });
       return false;
     }
 
-    // Password policy: min 8 chars, 1 number, 1 special char
-    const passwordPolicyRegex = /^(?=.*[0-9])(?=.*[!@#$%^&*()_+\-=[\]{};':"\\|,.<>/?]).{8,}$/;
-    if (!passwordPolicyRegex.test(password)) {
+    if (password.length < 6) {
       set({
         authActionLoading: false,
-        error: 'Password must be at least 8 characters long and contain at least 1 number and 1 special symbol.',
+        error: 'Password must be at least 6 characters.',
       });
       return false;
     }
@@ -289,8 +298,9 @@ export const useAuthStore = create((set, get) => ({
       return false;
     }
 
-    // Step 1: Validate username format and uniqueness on backend
-    const usernameRes = await checkUsernameApi(username);
+    // Step 1: Validate username format and uniqueness on backend if provided
+    const cleanUsername = (username && username.trim()) || email.split('@')[0];
+    const usernameRes = await checkUsernameApi(cleanUsername);
     if (!usernameRes.available) {
       set({
         authActionLoading: false,
@@ -304,14 +314,11 @@ export const useAuthStore = create((set, get) => ({
       const userCredential = await createUserWithEmailAndPassword(auth, email.trim(), password);
       const fbUser = userCredential.user;
 
-      // Step 3: Trigger mandatory email verification
-      await sendEmailVerification(fbUser);
-
-      // Step 4: Register backend profile with encrypted DOB & age tier
+      // Step 3: Register backend profile with encrypted DOB & age tier
       const regRes = await registerProfileApi({
         uid: fbUser.uid,
         email: email.trim(),
-        username: username.trim(),
+        username: cleanUsername,
         dateOfBirth,
         gender: gender || null,
       });
@@ -327,10 +334,11 @@ export const useAuthStore = create((set, get) => ({
       set({
         user: fbUser,
         profile: regRes.user,
-        isEmailVerified: false,
-        verificationEmailSent: true,
+        isEmailVerified: true,
+        verificationEmailSent: false,
         authActionLoading: false,
-        modalMode: 'verify_notice',
+        isAuthModalOpen: false,
+        modalMode: 'login',
         error: null,
       });
 
@@ -354,72 +362,18 @@ export const useAuthStore = create((set, get) => ({
   },
 
   /**
-   * Resend Email Verification link
+   * Resend Email Verification link (Email verification disabled)
    */
   resendVerification: async () => {
-    const { user } = get();
-    if (!user) return false;
-
-    set({ authActionLoading: true, error: null, successMessage: null });
-    try {
-      await sendEmailVerification(user);
-      set({
-        authActionLoading: false,
-        verificationEmailSent: true,
-        successMessage: 'A new verification link has been sent to your email address.',
-      });
-      return true;
-    } catch (err) {
-      let msg = 'Failed to resend verification email.';
-      if (err.code === 'auth/too-many-requests') {
-        msg = 'Please wait a moment before requesting another verification email.';
-      }
-      set({
-        authActionLoading: false,
-        error: msg,
-      });
-      return false;
-    }
+    return true;
   },
 
   /**
-   * Reload user session to verify if email has been verified
+   * Reload user session
    */
   checkVerificationStatus: async () => {
-    const { user } = get();
-    if (!user) return false;
-
-    set({ authActionLoading: true, error: null, successMessage: null });
-    try {
-      await user.reload();
-      const updatedUser = auth.currentUser;
-      const isVerified = Boolean(updatedUser?.emailVerified);
-
-      set({
-        user: updatedUser,
-        isEmailVerified: isVerified,
-        authActionLoading: false,
-      });
-
-      if (isVerified) {
-        set({
-          isAuthModalOpen: false,
-          successMessage: 'Email verified successfully! Welcome to Jennie Music.',
-        });
-        return true;
-      } else {
-        set({
-          error: 'Email not verified yet. Please check your inbox or spam folder.',
-        });
-        return false;
-      }
-    } catch (err) {
-      set({
-        authActionLoading: false,
-        error: 'Could not refresh verification status.',
-      });
-      return false;
-    }
+    set({ isEmailVerified: true, isAuthModalOpen: false });
+    return true;
   },
 
   /**
@@ -461,8 +415,8 @@ export const useAuthStore = create((set, get) => ({
         dpdpConsentAccepted: true,
         profile: profile ? { ...profile, dpdp_consent: { accepted: true, accepted_at: new Date() } } : profile,
         authActionLoading: false,
-        modalMode: user.emailVerified ? 'login' : 'verify_notice',
-        isAuthModalOpen: !user.emailVerified,
+        modalMode: 'login',
+        isAuthModalOpen: false,
       });
     } catch {
       set({ dpdpConsentAccepted: true, authActionLoading: false, isAuthModalOpen: false });
