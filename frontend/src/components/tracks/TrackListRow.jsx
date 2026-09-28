@@ -5,7 +5,7 @@ import { useLibraryStore } from '../../store/useLibraryStore';
 import { LikeButton } from '../common/LikeButton';
 import { formatDuration } from '../../data/mockTracks';
 
-export const TrackListRow = ({ track, index, queue = null }) => {
+export const TrackListRow = ({ track, index, queue = null, onPlay = null }) => {
   const currentTrack = usePlayerStore((state) => state.currentTrack);
   const isPlaying = usePlayerStore((state) => state.isPlaying);
   const playTrack = usePlayerStore((state) => state.playTrack);
@@ -22,6 +22,9 @@ export const TrackListRow = ({ track, index, queue = null }) => {
   const isCurrentPlaying = isCurrent && isPlaying;
 
   const handleRowClick = () => {
+    if (onPlay && typeof onPlay === 'function') {
+      onPlay(track);
+    }
     if (isCurrent) {
       togglePlay();
     } else {

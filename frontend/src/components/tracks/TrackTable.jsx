@@ -8,6 +8,7 @@ export const TrackTable = ({
   emptyMessage = 'No tracks found.',
   startIndex = 0,
   showHeader = true,
+  onPlay = null,
 }) => {
   if (!tracks || tracks.length === 0) {
     return (
@@ -46,6 +47,7 @@ export const TrackTable = ({
             track={track}
             index={startIndex + idx}
             queue={effectiveQueue}
+            onPlay={onPlay}
           />
         ))}
       </div>

@@ -55,12 +55,19 @@ export const TopHeader = () => {
 
   return (
     <header className="sticky top-0 z-30 flex items-center justify-between gap-3 px-4 md:px-8 py-3 bg-[#0A0A0A]/90 backdrop-blur-xl border-b border-white/[0.06]">
-      {/* Mobile Branding / Title */}
-      <div className="flex md:hidden items-center gap-2">
+      {/* Mobile Branding */}
+      <div 
+        onClick={() => setActiveView('home')}
+        role="button"
+        tabIndex={0}
+        onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') setActiveView('home'); }}
+        className="flex md:hidden items-center gap-2 cursor-pointer focus-visible:outline-none"
+        aria-label="Jennie Music Home"
+      >
         <div className="w-8 h-8 rounded-lg bg-gradient-to-tr from-neutral-800 to-neutral-700 flex items-center justify-center shadow-md">
           <Music2 size={16} className="text-white" aria-hidden="true" />
         </div>
-        <span className="text-sm font-bold tracking-tight text-white">{getPageTitle()}</span>
+        <span className="text-base font-bold tracking-tight text-white font-serif">Jennie</span>
       </div>
 
       {/* Desktop Navigation History Controls */}
@@ -134,28 +141,27 @@ export const TopHeader = () => {
           <span>Jennie Cloud</span>
         </div>
 
-        {/* User Auth Section */}
+        {/* User Auth Section (Desktop only - mobile uses dedicated bottom nav) */}
         {!user ? (
-          <div className="flex items-center gap-1.5 sm:gap-2">
+          <div className="hidden md:flex items-center gap-2">
             <button
               type="button"
               onClick={() => openAuthModal('login')}
-              className="px-2.5 sm:px-3 py-1.5 rounded-full text-neutral-300 hover:text-white hover:bg-white/10 text-xs font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-zinc-400"
+              className="px-3 py-1.5 rounded-full text-neutral-300 hover:text-white hover:bg-white/10 text-xs font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-zinc-400"
             >
               Sign In
             </button>
             <button
               type="button"
               onClick={() => openAuthModal('register')}
-              className="flex items-center gap-1.5 px-3 sm:px-3.5 py-1.5 rounded-full bg-white hover:bg-neutral-200 text-black text-xs font-bold transition-all shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-zinc-400 active:scale-95"
+              className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-white hover:bg-neutral-200 text-black text-xs font-bold transition-all shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-zinc-400 active:scale-95"
             >
               <User size={13} className="stroke-[2.5]" />
-              <span className="hidden sm:inline">Create Account</span>
-              <span className="sm:hidden">Sign Up</span>
+              <span>Create Account</span>
             </button>
           </div>
         ) : (
-          <div className="relative" ref={menuRef}>
+          <div className="relative hidden md:block" ref={menuRef}>
             <button
               type="button"
               onClick={() => setIsMenuOpen(!isMenuOpen)}

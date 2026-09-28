@@ -61,13 +61,11 @@ export const Home = () => {
     return () => { mounted = false; };
   }, []);
 
+  const top50Tracks = MOCK_TRACKS.slice(0, 10);
   const bollywoodTracks = feed.bollywood?.length ? feed.bollywood : MOCK_TRACKS.filter((t) => t.genre === 'Bollywood');
-  const punjabiTracks = feed.punjabi?.length ? feed.punjabi : MOCK_TRACKS.filter((t) => t.genre?.includes('Punjabi'));
-  const lofiTracks = feed.lofi?.length ? feed.lofi : MOCK_TRACKS.filter((t) => t.genre === 'Lo-Fi');
-  const synthTracks = feed.synthwave?.length ? feed.synthwave : MOCK_TRACKS.filter((t) => t.genre === 'Synthwave');
-  const ambientTracks = feed.ambient?.length ? feed.ambient : MOCK_TRACKS.filter((t) => t.genre === 'Ambient');
-  const acousticTracks = feed.acoustic?.length ? feed.acoustic : MOCK_TRACKS.filter((t) => t.genre === 'Acoustic' || t.genre === 'Classical');
-  const trendingTracks = feed.trending?.length ? feed.trending : MOCK_TRACKS.slice(0, 8);
+  const punjabiTracks = feed.punjabi?.length ? feed.punjabi : MOCK_TRACKS.filter((t) => t.genre?.includes('Punjabi') || t.genre === 'Punjabi');
+  const romanceTracks = MOCK_TRACKS.filter((t) => t.mood?.toLowerCase().includes('romanc') || t.mood?.toLowerCase().includes('love') || t.mood?.toLowerCase().includes('soulful') || t.mood?.toLowerCase().includes('devotion'));
+  const viralTracks = MOCK_TRACKS.filter((t) => t.featured);
 
   // Horizontal scroll shelf helper
   const ShelfRow = ({ title, icon: Icon, tracks, id }) => {
@@ -173,9 +171,12 @@ export const Home = () => {
         </section>
       )}
 
-      {/* Quick Curated Mixes Row */}
-      <section aria-label="Curated Mood Mixes">
-        <h2 className="text-lg font-bold text-white mb-3 tracking-tight">Curated Mood Mixes</h2>
+      {/* Quick Curated Playlists Row */}
+      <section aria-label="Top Playlists in India">
+        <h2 className="text-lg md:text-xl font-bold text-white mb-3.5 tracking-tight flex items-center gap-2">
+          <span>🇮🇳</span>
+          <span>India&apos;s Top Playlists</span>
+        </h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3.5">
           {FEATURED_MIXES.map((mix) => (
             <div
@@ -203,7 +204,7 @@ export const Home = () => {
                 </h3>
                 <p className="text-xs text-neutral-400 truncate mt-0.5 line-clamp-1">{mix.description}</p>
                 <span className="text-[10px] text-neutral-400 font-medium mt-1 inline-block">
-                  Royalty-free curated mix
+                  Top Playlist • Free Stream
                 </span>
               </div>
             </div>
@@ -211,76 +212,40 @@ export const Home = () => {
         </div>
       </section>
 
-      {/* Horizontal Shelves */}
+      {/* Horizontal Shelves - Spotify India Style */}
       <ShelfRow
-        title="🔥 Bollywood & Hindi Chartbusters"
+        title="🇮🇳 Top 50 - India (Most Played Songs)"
+        icon={Flame}
+        tracks={top50Tracks}
+        id="top50"
+      />
+
+      <ShelfRow
+        title="🔥 Hot Hits Hindi (Arijit Singh, Vishal Mishra, Anirudh & Pritam)"
         icon={Flame}
         tracks={bollywoodTracks}
         id="bollywood"
       />
 
       <ShelfRow
-        title="⚡ Punjabi Hits (Karan Aujla, Diljit & AP Dhillon)"
+        title="⚡ Today's Top Punjabi Hits (Karan Aujla, Diljit & AP Dhillon)"
         icon={Zap}
         tracks={punjabiTracks}
         id="punjabi"
       />
 
       <ShelfRow
-        title="Trending & Popular Worldwide"
-        icon={Flame}
-        tracks={trendingTracks}
-        id="trending"
-      />
-
-      <ShelfRow
-        title="Lo-Fi & Cozy Beats"
+        title="💖 Soulful Hindi Romance & Melodies"
         icon={Headphones}
-        tracks={lofiTracks}
-        id="lofi"
+        tracks={romanceTracks}
+        id="romance"
       />
 
       <ShelfRow
-        title="Synthwave & Cyber Energy"
+        title="🌟 Viral Hits India & Chartbusters"
         icon={Zap}
-        tracks={synthTracks}
-        id="synth"
-      />
-
-      {/* Genre Grid Exploration */}
-      <section className="space-y-4 pt-4" aria-label="Explore All Genres">
-        <div className="flex items-center justify-between">
-          <h2 className="text-lg md:text-xl font-bold text-white tracking-tight">
-            Explore All Genres & Moods
-          </h2>
-          <button
-            type="button"
-            onClick={() => setActiveView('search')}
-            className="text-xs font-semibold text-neutral-400 hover:text-white hover:underline transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white rounded"
-          >
-            See all
-          </button>
-        </div>
-
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3.5">
-          {GENRES.map((genre) => (
-            <GenreTile key={genre.id} genre={genre} />
-          ))}
-        </div>
-      </section>
-
-      <ShelfRow
-        title="Ambient Soundscapes for Sleep & Focus"
-        icon={Moon}
-        tracks={ambientTracks}
-        id="ambient"
-      />
-
-      <ShelfRow
-        title="Acoustic & Classical Expressions"
-        icon={Music4}
-        tracks={acousticTracks}
-        id="acoustic"
+        tracks={viralTracks}
+        id="viral"
       />
     </div>
   );
