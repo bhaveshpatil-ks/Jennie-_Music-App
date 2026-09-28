@@ -425,9 +425,16 @@ export const Search = () => {
                     <div
                       key={track.id}
                       onClick={() => handleRecentTrackPlay(track)}
+                      onKeyDown={(e) => {
+                        if (e.key === 'Enter' || e.key === ' ') {
+                          e.preventDefault();
+                          handleRecentTrackPlay(track);
+                        }
+                      }}
                       role="button"
                       tabIndex={0}
-                      className="group flex items-center justify-between gap-3.5 p-2.5 sm:p-3 rounded-xl hover:bg-white/[0.04] transition-colors cursor-pointer"
+                      aria-label={`Play ${track.title} by ${track.artist}`}
+                      className="group flex items-center justify-between gap-3.5 p-2.5 sm:p-3 rounded-xl hover:bg-white/[0.04] transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-white/20"
                     >
                       <div className="flex items-center gap-3.5 min-w-0">
                         <div className="relative w-12 h-12 rounded-lg overflow-hidden flex-shrink-0 bg-neutral-900 shadow">
