@@ -9,13 +9,19 @@ import {
   toggleFavoriteApi,
 } from '../services/api';
 
-// Load initial liked from localStorage
+// Load initial liked from localStorage (clean without demo entries)
 const getInitialLikes = () => {
   try {
     const saved = localStorage.getItem('jennie_liked_tracks') || localStorage.getItem('lora_liked_tracks') || localStorage.getItem('aura_liked_tracks');
-    if (saved) return JSON.parse(saved);
+    if (saved) {
+      const parsed = JSON.parse(saved);
+      if (Array.isArray(parsed)) {
+        // Strip out legacy demo placeholder IDs
+        return parsed.filter((id) => !String(id).startsWith('track-') && !['track-1', 'track-5', 'track-9', 'track-12', 'track-18'].includes(id));
+      }
+    }
   } catch (e) {}
-  return ['track-1', 'track-5', 'track-9', 'track-12', 'track-18'];
+  return [];
 };
 
 const getInitialLikedTrackObjects = () => {
@@ -23,7 +29,9 @@ const getInitialLikedTrackObjects = () => {
     const saved = localStorage.getItem('jennie_liked_track_objects');
     if (saved) {
       const parsed = JSON.parse(saved);
-      if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+      if (Array.isArray(parsed)) {
+        return parsed.filter((t) => !String(t?.id).startsWith('track-'));
+      }
     }
   } catch (e) {}
   return [];
@@ -32,26 +40,15 @@ const getInitialLikedTrackObjects = () => {
 const getInitialPlaylists = () => {
   try {
     const saved = localStorage.getItem('jennie_custom_playlists') || localStorage.getItem('lora_custom_playlists');
-    if (saved) return JSON.parse(saved);
+    if (saved) {
+      const parsed = JSON.parse(saved);
+      if (Array.isArray(parsed)) {
+        // Strip out legacy demo playlists
+        return parsed.filter((pl) => pl.id !== 'pl-coding' && pl.id !== 'pl-morning');
+      }
+    }
   } catch (e) {}
-  return [
-    {
-      id: 'pl-coding',
-      title: 'Late Night Coding',
-      description: 'Zero lyrics, pure flow state synth and ambient waves.',
-      coverUrl: 'https://images.unsplash.com/photo-1550745165-9bc0b252726f?w=600&auto=format&fit=crop&q=80',
-      trackIds: ['track-8', 'track-5', 'track-6', 'track-14'],
-      createdAt: '2024-03-01',
-    },
-    {
-      id: 'pl-morning',
-      title: 'Morning Acoustic & Coffee',
-      description: 'Peaceful guitar notes and gentle acoustic melodies to start the day.',
-      coverUrl: 'https://images.unsplash.com/photo-1510915361894-db8b60106cb1?w=600&auto=format&fit=crop&q=80',
-      trackIds: ['track-1', 'track-15', 'track-16', 'track-17'],
-      createdAt: '2024-03-02',
-    },
-  ];
+  return [];
 };
 
 export const useLibraryStore = create((set, get) => ({

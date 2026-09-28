@@ -4,25 +4,8 @@ import { isDbConnected } from '../config/db.js';
 
 export const playlistsRouter = Router();
 
-// Fallback in-memory playlists if DB is offline
-let memoryPlaylists = [
-  {
-    id: 'pl-coding',
-    title: 'Late Night Coding',
-    description: 'Zero lyrics, pure flow state synth and ambient waves.',
-    coverUrl: 'https://images.unsplash.com/photo-1550745165-9bc0b252726f?w=600&auto=format&fit=crop&q=80',
-    trackIds: ['track-8', 'track-5', 'track-6', 'track-14'],
-    createdAt: '2024-03-01',
-  },
-  {
-    id: 'pl-morning',
-    title: 'Morning Acoustic & Coffee',
-    description: 'Peaceful guitar notes and gentle acoustic melodies to start the day.',
-    coverUrl: 'https://images.unsplash.com/photo-1510915361894-db8b60106cb1?w=600&auto=format&fit=crop&q=80',
-    trackIds: ['track-1', 'track-15', 'track-16', 'track-17'],
-    createdAt: '2024-03-02',
-  },
-];
+// Fallback in-memory playlists if DB is offline (starts empty)
+let memoryPlaylists = [];
 
 /**
  * GET /api/playlists
@@ -31,14 +14,7 @@ playlistsRouter.get('/', async (req, res) => {
   try {
     if (isDbConnected()) {
       const dbPlaylists = await Playlist.find().sort({ createdAt: -1 });
-      if (dbPlaylists.length > 0) {
-        return res.json({ success: true, data: dbPlaylists });
-      }
-      // If DB is empty, seed defaults
-      for (const p of memoryPlaylists) {
-        await Playlist.findOneAndUpdate({ id: p.id }, p, { upsert: true });
-      }
-      return res.json({ success: true, data: memoryPlaylists });
+      return res.json({ success: true, data: dbPlaylists });
     }
     res.json({ success: true, data: memoryPlaylists });
   } catch (error) {
