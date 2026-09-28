@@ -228,6 +228,11 @@ export const usePlayerStore = create((set, get) => {
     setSearchResultsContext: (results) => set({ searchResultsContext: results || [] }),
 
     // Actions
+    /**
+     * Initiates playback of a track and constructs a YouTube Mix queue if needed
+     * @param {Object} track - The song object to play
+     * @param {Array} [newQueue] - Optional queue to override current session
+     */
     playTrack: (track, newQueue = null) => {
       if (!track) return;
 
