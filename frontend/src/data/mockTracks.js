@@ -4,6 +4,11 @@
  * Zero fuzzy keyword searching - pure profile, audio features & collaborative affinity.
  */
 
+/**
+ * Returns high-fidelity track cover URL with fallback to YouTube HQ default thumbnail
+ * @param {Object} track - The song object
+ * @returns {string} Fully qualified image URL
+ */
 export const getTrackCoverUrl = (track) => {
   if (!track) return 'https://i.ytimg.com/vi/BddP6PYo2gs/hqdefault.jpg';
   const ytId = track.youtubeId || (typeof track.id === 'string' && track.id.startsWith('yt-') ? track.id.replace('yt-', '') : null);
