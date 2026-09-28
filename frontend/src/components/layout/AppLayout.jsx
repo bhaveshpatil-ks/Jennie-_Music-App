@@ -1,9 +1,11 @@
 import React, { useState, useEffect, useRef } from 'react';
 import Lenis from 'lenis';
+import { Music } from 'lucide-react';
 import { Sidebar, TopHeader, MobileNav, Footer } from './index';
 import { PlayerBar, QueueDrawer, FullscreenPlayer, YouTubePlayerEmbed } from '../player';
 import { CreatePlaylistModal, CookieConsentBanner, OfflineAlert } from '../common';
 import { AuthModal } from '../auth/AuthModal';
+import { WelcomeAuthScreen } from '../auth/WelcomeAuthScreen';
 import { useLibraryStore } from '../../store/useLibraryStore';
 import { useAuthStore } from '../../store/useAuthStore';
 
@@ -33,6 +35,17 @@ export const AppLayout = () => {
   const mainRef = useRef(null);
   const contentRef = useRef(null);
   const lenisRef = useRef(null);
+
+  // Auth state & onboarding gate
+  const user = useAuthStore((state) => state.user);
+  const loading = useAuthStore((state) => state.loading);
+  const [hasEnteredGuest, setHasEnteredGuest] = useState(() => {
+    try {
+      return localStorage.getItem('jennie_guest_session') === 'true';
+    } catch (_) {
+      return false;
+    }
+  });
 
   // Initialize Firebase Auth listener
   const initAuth = useAuthStore((state) => state.initAuth);
@@ -172,6 +185,28 @@ export const AppLayout = () => {
         return <NotFound />;
     }
   };
+
+  // 1. Initial Splash Loader while Firebase session state initializes
+  if (loading) {
+    return (
+      <div className="fixed inset-0 z-50 bg-[#070708] flex flex-col items-center justify-center text-white">
+        <div className="w-12 h-12 rounded-2xl bg-white text-black flex items-center justify-center shadow-2xl mb-4 animate-pulse">
+          <Music size={26} className="fill-black" />
+        </div>
+        <span className="text-xl font-bold font-serif tracking-tight">Jennie</span>
+        <div className="flex items-center gap-1.5 mt-5">
+          <span className="w-1.5 h-1.5 rounded-full bg-white animate-bounce" style={{ animationDelay: '0ms' }} />
+          <span className="w-1.5 h-1.5 rounded-full bg-white animate-bounce" style={{ animationDelay: '150ms' }} />
+          <span className="w-1.5 h-1.5 rounded-full bg-white animate-bounce" style={{ animationDelay: '300ms' }} />
+        </div>
+      </div>
+    );
+  }
+
+  // 2. Onboarding Auth Gate: When opening the app first, require login / account creation before moving to home
+  if (!user && !hasEnteredGuest) {
+    return <WelcomeAuthScreen onEnterGuest={() => setHasEnteredGuest(true)} />;
+  }
 
   return (
     <div className="flex h-screen bg-[#080808] text-white overflow-hidden selection:bg-neutral-700 selection:text-white relative">

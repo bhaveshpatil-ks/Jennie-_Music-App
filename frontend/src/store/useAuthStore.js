@@ -475,6 +475,9 @@ export const useAuthStore = create((set, get) => ({
   logout: async () => {
     set({ authActionLoading: true });
     try {
+      try {
+        localStorage.removeItem('jennie_guest_session');
+      } catch (_) {}
       await signOut(auth);
       set({
         user: null,

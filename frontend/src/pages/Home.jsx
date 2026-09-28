@@ -126,50 +126,6 @@ export const Home = () => {
 
   return (
     <div className="space-y-8 pb-12">
-      {/* Starting App Welcome & Auth Banner */}
-      {!user && !dismissStartBanner && (
-        <section aria-label="Welcome to Jennie Music" className="relative overflow-hidden rounded-3xl bg-gradient-to-r from-neutral-900 via-[#141416] to-neutral-900 border border-white/10 p-5 sm:p-7 shadow-2xl">
-          <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-5">
-            <div className="space-y-2 max-w-xl">
-              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 text-neutral-300 text-[11px] font-semibold tracking-wide uppercase">
-                <Sparkles size={12} className="text-white" />
-                <span>Free Music Streaming • Direct Listening</span>
-              </div>
-              <h1 className="text-xl sm:text-2xl lg:text-3xl font-serif font-bold text-white tracking-tight">
-                Listen Directly or Create an Account
-              </h1>
-              <p className="text-xs sm:text-sm text-neutral-400 leading-relaxed">
-                Stream unlimited tracks instantly without any sign-up required. Sign in or create a free account to save custom playlists and sync your liked songs across devices.
-              </p>
-            </div>
-            <div className="flex flex-wrap items-center gap-2.5 sm:gap-3 shrink-0">
-              <button
-                type="button"
-                onClick={() => openAuthModal('register')}
-                className="px-5 py-2.5 rounded-full bg-white text-black text-xs sm:text-sm font-bold hover:bg-neutral-200 transition-all shadow-lg active:scale-95 cursor-pointer"
-              >
-                Create Account
-              </button>
-              <button
-                type="button"
-                onClick={() => openAuthModal('login')}
-                className="px-4 py-2.5 rounded-full bg-neutral-800 hover:bg-neutral-700 text-white text-xs sm:text-sm font-semibold transition-all border border-white/10 cursor-pointer"
-              >
-                Log In
-              </button>
-              <button
-                type="button"
-                onClick={handleDismissBanner}
-                className="text-xs text-neutral-400 hover:text-white px-2 py-1 transition-colors cursor-pointer"
-                title="Dismiss welcome banner"
-              >
-                Dismiss
-              </button>
-            </div>
-          </div>
-          <div className="absolute -right-16 -top-16 w-64 h-64 bg-white/5 rounded-full blur-3xl pointer-events-none" />
-        </section>
-      )}
 
       {/* Quick Curated Playlists Row */}
       <section aria-label="Top Playlists in India">
