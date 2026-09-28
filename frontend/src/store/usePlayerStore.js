@@ -215,9 +215,17 @@ export const usePlayerStore = create((set, get) => {
     vocalClarity: true, // Studio Vocal Clarity & Loudness Enhancement
     toggleVocalClarity: () => set((state) => ({ vocalClarity: !state.vocalClarity })),
 
-    // UI Modals / Drawers
+    // UI Modals / Drawers & Filter Tabs
     isFullscreenOpen: false,
     isQueueOpen: false,
+    queueFilterTab: 'all', // 'all' | 'search' | 'artist' | 'genre'
+    setQueueFilterTab: (tab) => set({ queueFilterTab: tab }),
+
+    // Live Adaptation & Search Context
+    sessionArtistPenalties: {},
+    sessionPoolSkips: [],
+    searchResultsContext: [],
+    setSearchResultsContext: (results) => set({ searchResultsContext: results || [] }),
 
     // Actions
     playTrack: (track, newQueue = null) => {
@@ -226,31 +234,6 @@ export const usePlayerStore = create((set, get) => {
       const currentQueue = newQueue || get().queue;
       let targetIndex = currentQueue.findIndex((t) => t.id === track.id);
       let updatedQueue = currentQueue;
-
-      // Build deduplicated candidate pool from current queue, original queue, and catalog
-      const poolMap = new Map();
-      [...(newQueue || []), ...(get().queue || []), ...(get().originalQueue || []), ...MOCK_TRACKS].forEach((t) => {
-        if (t && t.id) poolMap.set(t.id, t);
-      });
-      const candidatePool = Array.from(poolMap.values());
-
-      // If user plays a standalone track or empty queue, generate cohesive radio queue
-      if (targetIndex === -1 || !newQueue || newQueue.length <= 1) {
-        const recommended = buildRecommendedQueue(track, 10, {
-          history: get().history,
-          consecutiveSkips: get().consecutiveSkips,
-        }, candidatePool).map((r) => ({
-          ...r.track,
-          recommendationReason: r.reason_for_recommendation,
-          recommendationConfidence: r.confidence_score,
-          recommendationCategory: r.category,
-        }));
-        updatedQueue = [track, ...recommended.filter((r) => r.id !== track.id)];
-        targetIndex = 0;
-      }
-
-      const prevTrack = get().currentTrack;
-      const history = prevTrack ? [prevTrack, ...get().history.slice(0, 19)] : get().history;
 
       // Extract youtubeId reliably from youtubeId property or yt- ID prefix
       const youtubeId = track.youtubeId || (typeof track.id === 'string' && track.id.startsWith('yt-') ? track.id.replace('yt-', '') : null);
@@ -262,11 +245,37 @@ export const usePlayerStore = create((set, get) => {
         coverUrl: getTrackCoverUrl(track),
       };
 
+      // Deduplicated candidate pool from catalog & existing queues
+      const poolMap = new Map();
+      [...MOCK_TRACKS, ...(newQueue || []), ...(get().queue || [])].forEach((t) => {
+        if (t && t.id) poolMap.set(t.id, t);
+      });
+      const candidatePool = Array.from(poolMap.values());
+
+      // If user plays a standalone track or empty queue, generate cohesive YouTube Mix queue from structured profile
+      if (targetIndex === -1 || !newQueue || newQueue.length <= 1) {
+        const recommended = buildRecommendedQueue(normalizedTrack, 10, {
+          history: get().history,
+          consecutiveSkips: get().consecutiveSkips,
+          sessionArtistPenalties: get().sessionArtistPenalties,
+        }, candidatePool).map((r) => ({
+          ...r,
+          recommendationReason: r.reason || r.recommendationReason,
+          recommendationConfidence: r.score || r.recommendationConfidence,
+          recommendationCategory: r.recommendationCategory || (r.source_pool === 'A' ? 'same_artist' : 'related_artist'),
+        }));
+        updatedQueue = [normalizedTrack, ...recommended.filter((r) => r.id !== normalizedTrack.id)];
+        targetIndex = 0;
+      }
+
+      const prevTrack = get().currentTrack;
+      const history = prevTrack ? [prevTrack, ...get().history.slice(0, 29)] : get().history;
+
       // Evaluate single next-song decision
       const nextDecision = decideNextSong(normalizedTrack, {
         history,
         consecutiveSkips: get().consecutiveSkips,
-        queuePosition: targetIndex + 1,
+        sessionArtistPenalties: get().sessionArtistPenalties,
       }, candidatePool);
 
       set({
@@ -405,48 +414,88 @@ export const usePlayerStore = create((set, get) => {
     },
 
     nextTrack: (isExplicitSkip = false) => {
-      const { queue, currentIndex, repeatMode, currentTime, consecutiveSkips, currentTrack, history } = get();
+      const {
+        queue,
+        currentIndex,
+        repeatMode,
+        currentTime,
+        consecutiveSkips,
+        currentTrack,
+        history,
+        sessionArtistPenalties,
+        sessionPoolSkips
+      } = get();
+
       if (!currentTrack && queue.length === 0) return;
 
-      // Track skip fatigue signal: If skipped within 15 seconds, increment consecutive skips
-      let newSkips = consecutiveSkips;
-      if (isExplicitSkip || (currentTime > 0 && currentTime < 15)) {
-        newSkips = consecutiveSkips + 1;
-      } else if (currentTime >= 30) {
-        newSkips = 0;
-      }
-      set({ consecutiveSkips: newSkips });
-
       let nextIndex = currentIndex + 1;
+      let newPenalties = { ...sessionArtistPenalties };
+      let newPoolSkips = [...sessionPoolSkips];
 
-      if (nextIndex >= queue.length) {
+      // Live Adaptation (Step 5):
+      // Skip under 5 seconds: strong negative -> drop artist weight by 60% and regenerate rest of queue
+      const isQuickSkip = (currentTime > 0 && currentTime < 5) || (isExplicitSkip && currentTime < 5);
+      if (isQuickSkip && currentTrack) {
+        const artistKey = currentTrack.artist_id || currentTrack.artist?.toLowerCase();
+        if (artistKey) {
+          newPenalties[artistKey] = Math.min(0.90, (newPenalties[artistKey] || 0) + 0.60);
+        }
+        if (currentTrack.source_pool) {
+          newPoolSkips.push(currentTrack.source_pool);
+        }
+      } else if (currentTime >= 30 && currentTrack) {
+        // Full listen or > 30 seconds: boost artist weight by 30%
+        const artistKey = currentTrack.artist_id || currentTrack.artist?.toLowerCase();
+        if (artistKey) {
+          newPenalties[artistKey] = Math.max(-0.50, (newPenalties[artistKey] || 0) - 0.30);
+        }
+        newPoolSkips = [];
+      }
+
+      let activeQueue = [...queue];
+
+      // If quick skip (< 5s), regenerate the upcoming queue to immediately enforce the 60% drop
+      if (isQuickSkip && nextIndex < activeQueue.length) {
+        const nextSeed = activeQueue[nextIndex] || currentTrack;
+        const freshUpcoming = buildRecommendedQueue(nextSeed, 8, {
+          history: [currentTrack, ...history],
+          sessionArtistPenalties: newPenalties,
+        }, MOCK_TRACKS);
+        activeQueue = [...activeQueue.slice(0, nextIndex + 1), ...freshUpcoming.filter((r) => r.id !== nextSeed.id)];
+      }
+
+      // Background autoplay refill: When 3 tracks remain in queue, append fresh recommendations
+      if (activeQueue.length - nextIndex <= 3) {
+        const tailSeed = activeQueue[activeQueue.length - 1] || currentTrack;
+        const tailExtension = buildRecommendedQueue(tailSeed, 8, {
+          history: [currentTrack, ...history],
+          sessionArtistPenalties: newPenalties,
+        }, MOCK_TRACKS);
+        const existingIds = new Set(activeQueue.map((t) => t.id || t.youtubeId));
+        const newToAdd = tailExtension.filter((t) => !existingIds.has(t.id || t.youtubeId));
+        activeQueue = [...activeQueue, ...newToAdd];
+      }
+
+      set({
+        sessionArtistPenalties: newPenalties,
+        sessionPoolSkips: newPoolSkips,
+        consecutiveSkips: isQuickSkip ? consecutiveSkips + 1 : 0,
+        queue: activeQueue,
+      });
+
+      if (nextIndex >= activeQueue.length) {
         if (repeatMode === 'all') {
           nextIndex = 0;
         } else {
-          // Infinite cohesive radio: Ask recommendation engine for next song
-          const poolMap = new Map();
-          [...queue, ...(get().originalQueue || []), ...MOCK_TRACKS].forEach((t) => {
-            if (t && t.id) poolMap.set(t.id, t);
-          });
-          const candidatePool = Array.from(poolMap.values());
-
-          const nextDecision = decideNextSong(currentTrack, {
+          // Infinite cohesive radio autoplay
+          const nextRecs = buildRecommendedQueue(currentTrack, 6, {
             history: [currentTrack, ...history],
-            consecutiveSkips: newSkips,
-            queuePosition: queue.length + 1,
-          }, candidatePool);
-
-          if (nextDecision && nextDecision.track) {
-            const nextSong = {
-              ...nextDecision.track,
-              recommendationReason: nextDecision.reason_for_recommendation,
-              recommendationConfidence: nextDecision.confidence_score,
-            };
-            const extendedQueue = [...queue, nextSong];
-            get().playTrack(nextSong, extendedQueue);
+            sessionArtistPenalties: newPenalties,
+          }, MOCK_TRACKS);
+          if (nextRecs.length > 0) {
+            get().playTrack(nextRecs[0], nextRecs);
             return;
           }
-
           if (globalAudio) globalAudio.pause();
           get().ytController?.pause();
           stopTicker();
@@ -455,8 +504,10 @@ export const usePlayerStore = create((set, get) => {
         }
       }
 
-      const nextSong = queue[nextIndex];
-      get().playTrack(nextSong, queue);
+      const nextSong = activeQueue[nextIndex];
+      if (nextSong) {
+        get().playTrack(nextSong, activeQueue);
+      }
     },
 
     prevTrack: () => {

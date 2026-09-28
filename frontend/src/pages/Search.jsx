@@ -83,6 +83,8 @@ export const Search = () => {
     return () => clearTimeout(timer);
   }, [query, searchFilter, source]);
 
+  const setSearchResultsContext = usePlayerStore((state) => state.setSearchResultsContext);
+
   const filteredTracks = liveTracks;
   const topResult = filteredTracks.length > 0 ? filteredTracks[0] : null;
   const isTopResultPlaying = topResult && currentTrack?.id === topResult.id && isPlaying;
@@ -91,10 +93,12 @@ export const Search = () => {
   const handleTopResultPlay = () => {
     if (!topResult) return;
     saveToRecentSearches(topResult);
+    // Root Bug Fix: Search query finds the first song; autoplay queue is generated from structured profile!
+    setSearchResultsContext(filteredTracks);
     if (currentTrack?.id === topResult.id) {
       togglePlay();
     } else {
-      playTrack(topResult, filteredTracks);
+      playTrack(topResult); // triggers YouTube Mix queue from structured profile
     }
   };
 
@@ -103,8 +107,13 @@ export const Search = () => {
     if (currentTrack?.id === track.id) {
       togglePlay();
     } else {
-      playTrack(track, recentSearches);
+      playTrack(track); // triggers YouTube Mix queue from structured profile
     }
+  };
+
+  const handleTrackTablePlay = (track) => {
+    saveToRecentSearches(track);
+    setSearchResultsContext(filteredTracks);
   };
 
   const quickSuggestions = [
@@ -292,8 +301,8 @@ export const Search = () => {
                         <div className="bg-[#121212] rounded-2xl p-2 border border-white/5 shadow-xl h-[calc(100%-24px)] flex flex-col justify-center">
                           <TrackTable 
                             tracks={filteredTracks.slice(0, 4)} 
-                            queue={filteredTracks} 
-                            onPlay={saveToRecentSearches}
+                            queue={null} 
+                            onPlay={handleTrackTablePlay}
                           />
                         </div>
                       </div>
@@ -307,9 +316,9 @@ export const Search = () => {
                         <div className="bg-[#121212] rounded-2xl p-2 border border-white/5 shadow-xl">
                           <TrackTable
                             tracks={filteredTracks.slice(4)}
-                            queue={filteredTracks}
+                            queue={null}
                             startIndex={4}
-                            onPlay={saveToRecentSearches}
+                            onPlay={handleTrackTablePlay}
                           />
                         </div>
                       </div>
@@ -368,8 +377,8 @@ export const Search = () => {
                       <div className="bg-[#121212] rounded-2xl p-1.5 border border-white/5 shadow-xl">
                         <TrackTable 
                           tracks={filteredTracks} 
-                          queue={filteredTracks} 
-                          onPlay={saveToRecentSearches}
+                          queue={null} 
+                          onPlay={handleTrackTablePlay}
                         />
                       </div>
                     </div>

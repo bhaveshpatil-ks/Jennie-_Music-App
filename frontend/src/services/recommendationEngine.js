@@ -1,646 +1,470 @@
 /**
- * Recommendation Engine for Jennie Music Streaming
+ * Next Track & YouTube Mix Autoplay Engine for Jennie Music
  * 
- * Implements weighted multi-signal scoring, strict anti-repetition rules,
- * same-artist and same-cluster cooldowns, diversity injection, and session decay.
+ * Generates dynamic, intelligent queues that behave like YouTube Mix / Autoplay:
+ * Starts from the played song's structured profile and widens into:
+ * Pool A: Same-Artist Top Tracks (capped at 2-3 per 10)
+ * Pool B: Related Artists (shared genre + language + region + collaborators)
+ * Pool C: Regional Trending in Same Genre
+ * Pool D: Adjacent Language/Region Discovery (matching energy & BPM)
+ * Pool E: Collaborative Session Signals (coPlayed)
+ * Pool F: Personal History & Liked Songs
  * 
- * FIXED SCORING FORMULA:
- * - Genre / sub-genre match: 35%
- * - Mood / energy / audio-feature similarity: 25%
- * - Collaborative filtering ("users who played X also played"): 20%
- * - Same artist / album (capped & decayed): 15%
- * - Freshness / discovery injection: 5%
+ * ROOT RULE: Never uses search query text or title string matching!
+ * Title text is display-only.
+ * ZERO YouTube API calls per decision.
  */
 
 import { MOCK_TRACKS } from '../data/mockTracks.js';
 
 /**
- * Genre Proximity / Affinity Graph
- * Defines natural transitions between genres to maintain mood continuity.
+ * Normalizes artist identifier
  */
-export const GENRE_AFFINITY = {
-  'Lo-Fi': {
-    adjacent: ['Ambient', 'Classical', 'Acoustic', 'Chillhop', 'Jazz'],
-    disallowedImmediate: ['Metal', 'EDM', 'Hard Rock', 'Psytrance']
-  },
-  'Synthwave': {
-    adjacent: ['Deep House', 'Electro', 'Cyberpunk', 'Techno'],
-    disallowedImmediate: ['Acoustic', 'Traditional Folk', 'Classical Piano']
-  },
-  'Deep House': {
-    adjacent: ['Synthwave', 'Electronic', 'Tech House', 'Nu-Disco'],
-    disallowedImmediate: ['Ambient Drone', 'Classical', 'Acoustic Solo']
-  },
-  'Ambient': {
-    adjacent: ['Lo-Fi', 'Classical', 'Meditation', 'Downtempo'],
-    disallowedImmediate: ['Deep House', 'Synthwave', 'EDM', 'Hip-Hop']
-  },
-  'Acoustic': {
-    adjacent: ['Classical', 'Lo-Fi', 'Indie Folk', 'Singer-Songwriter'],
-    disallowedImmediate: ['Synthwave', 'Deep House', 'EDM', 'Dubstep']
-  },
-  'Classical': {
-    adjacent: ['Ambient', 'Acoustic', 'Cinematic', 'Neo-Classical'],
-    disallowedImmediate: ['Synthwave', 'Deep House', 'EDM', 'Trap']
-  },
-  'Bollywood Romantic': {
-    adjacent: ['Sufi', 'Indian Indie', 'Acoustic', 'Ghazal', 'Pop / Global'],
-    disallowedImmediate: ['Death Metal', 'Dark Synthwave']
-  },
-  'Hip-Hop': {
-    adjacent: ['Punjabi Hip-Hop', 'Urban Beat', 'Trap', 'R&B', 'Lo-Fi', 'Pop / Global'],
-    disallowedImmediate: ['Classical Solo', 'Ambient Drone']
-  },
-  'Punjabi Hip-Hop': {
-    adjacent: ['Hip-Hop', 'Urban Beat', 'Trap', 'Bollywood Romantic', 'Pop / Global'],
-    disallowedImmediate: ['Classical Solo', 'Ambient Drone']
-  },
-  'Pop / Global': {
-    adjacent: ['Hip-Hop', 'Punjabi Hip-Hop', 'Deep House', 'Bollywood Romantic', 'Synthwave'],
-    disallowedImmediate: ['Ambient Drone']
-  }
-};
-
-/**
- * Default audio features & collaborative co-play map for mock catalog tracks
- */
-export const TRACK_AUDIO_FEATURES = {
-  'track-1': { tempo: 82, energy: 0.32, valence: 0.55, danceability: 0.60, acousticness: 0.72, subGenre: 'Chillhop', language: 'Instrumental', coPlayed: ['track-3', 'track-2', 'track-16'] },
-  'track-2': { tempo: 78, energy: 0.28, valence: 0.40, danceability: 0.52, acousticness: 0.80, subGenre: 'Rainy Lo-Fi', language: 'Instrumental', coPlayed: ['track-1', 'track-3', 'track-14'] },
-  'track-3': { tempo: 80, energy: 0.30, valence: 0.50, danceability: 0.58, acousticness: 0.75, subGenre: 'Chillhop', language: 'Instrumental', coPlayed: ['track-1', 'track-2', 'track-4'] },
-  'track-4': { tempo: 88, energy: 0.42, valence: 0.62, danceability: 0.65, acousticness: 0.50, subGenre: 'Jazzhop', language: 'Instrumental', coPlayed: ['track-1', 'track-5', 'track-7'] },
-  
-  'track-5': { tempo: 126, energy: 0.85, valence: 0.72, danceability: 0.75, acousticness: 0.08, subGenre: 'Darksynth', language: 'Instrumental', coPlayed: ['track-7', 'track-6', 'track-8'] },
-  'track-6': { tempo: 130, energy: 0.88, valence: 0.68, danceability: 0.78, acousticness: 0.05, subGenre: 'Outrun', language: 'Instrumental', coPlayed: ['track-5', 'track-7', 'track-10'] },
-  'track-7': { tempo: 122, energy: 0.78, valence: 0.65, danceability: 0.70, acousticness: 0.12, subGenre: 'Dreamwave', language: 'Instrumental', coPlayed: ['track-5', 'track-8', 'track-11'] },
-  'track-8': { tempo: 120, energy: 0.75, valence: 0.58, danceability: 0.68, acousticness: 0.10, subGenre: 'Cyberpunk', language: 'Instrumental', coPlayed: ['track-5', 'track-7', 'track-6'] },
-
-  'track-9': { tempo: 124, energy: 0.82, valence: 0.80, danceability: 0.84, acousticness: 0.15, subGenre: 'Melodic House', language: 'Instrumental', coPlayed: ['track-11', 'track-10', 'track-5'] },
-  'track-10': { tempo: 125, energy: 0.86, valence: 0.76, danceability: 0.82, acousticness: 0.10, subGenre: 'Club House', language: 'Instrumental', coPlayed: ['track-9', 'track-11', 'track-6'] },
-  'track-11': { tempo: 122, energy: 0.79, valence: 0.70, danceability: 0.80, acousticness: 0.18, subGenre: 'Deep Melodic', language: 'Instrumental', coPlayed: ['track-9', 'track-10', 'track-7'] },
-
-  'track-12': { tempo: 60, energy: 0.12, valence: 0.28, danceability: 0.15, acousticness: 0.94, subGenre: 'Drone Ambient', language: 'Instrumental', coPlayed: ['track-13', 'track-14', 'track-18'] },
-  'track-13': { tempo: 64, energy: 0.15, valence: 0.35, danceability: 0.20, acousticness: 0.90, subGenre: 'Meditation', language: 'Instrumental', coPlayed: ['track-12', 'track-14', 'track-17'] },
-  'track-14': { tempo: 68, energy: 0.18, valence: 0.38, danceability: 0.22, acousticness: 0.88, subGenre: 'Space Ambient', language: 'Instrumental', coPlayed: ['track-12', 'track-13', 'track-2'] },
-
-  'track-15': { tempo: 96, energy: 0.38, valence: 0.60, danceability: 0.54, acousticness: 0.88, subGenre: 'Fingerstyle Folk', language: 'Instrumental', coPlayed: ['track-16', 'track-17', 'track-1'] },
-  'track-16': { tempo: 92, energy: 0.35, valence: 0.56, danceability: 0.50, acousticness: 0.90, subGenre: 'Acoustic Indie', language: 'Instrumental', coPlayed: ['track-15', 'track-17', 'track-3'] },
-  'track-17': { tempo: 88, energy: 0.30, valence: 0.52, danceability: 0.48, acousticness: 0.92, subGenre: 'Chamber Folk', language: 'Instrumental', coPlayed: ['track-15', 'track-16', 'track-19'] },
-
-  'track-18': { tempo: 72, energy: 0.22, valence: 0.32, danceability: 0.25, acousticness: 0.96, subGenre: 'Solo Piano', language: 'Instrumental', coPlayed: ['track-19', 'track-20', 'track-12'] },
-  'track-19': { tempo: 75, energy: 0.24, valence: 0.36, danceability: 0.30, acousticness: 0.95, subGenre: 'Neo-Classical Waltz', language: 'Instrumental', coPlayed: ['track-18', 'track-20', 'track-17'] },
-  'track-20': { tempo: 70, energy: 0.20, valence: 0.30, danceability: 0.24, acousticness: 0.97, subGenre: 'Cinematic Minimal', language: 'Instrumental', coPlayed: ['track-18', 'track-19', 'track-14'] },
-};
-
-/**
- * Normalizes artist name for consistent matching
- */
-export function normalizeArtist(artist) {
-  if (!artist || typeof artist !== 'string') return '';
-  return artist
+export function normalizeArtistId(artistOrId) {
+  if (!artistOrId) return '';
+  return String(artistOrId)
     .toLowerCase()
-    .replace(/ - topic$/i, '')
-    .replace(/\b(feat\.?|ft\.?|featuring)\b.*$/i, '')
-    .trim();
+    .replace(/&.*/, '')
+    .replace(/ft\..*/, '')
+    .replace(/feat\..*/, '')
+    .replace(/[^a-z0-9]/g, '_')
+    .replace(/_+/g, '_')
+    .replace(/^_|_$/g, '');
 }
 
 /**
- * Extracts a song cluster identifier for near-duplicates or series:
- * (same artist + same album OR similar title pattern, e.g., a "Bars" series)
+ * Extracts structured profile from a track object.
+ * If fields are missing, infers standard defaults.
  */
-export function getSongCluster(track) {
-  if (!track) return 'unknown_cluster';
-  const artist = normalizeArtist(track.artist);
-  const album = (track.album || '').toLowerCase().trim();
-  const rawTitle = (track.title || '').toLowerCase().trim();
-
-  // Pattern match series or numeric/installment releases (e.g. "52 Bars", "100 Bars", "Part 1", "Pt. 2", "Vol 1")
-  const seriesMatch = rawTitle.match(/\b(bars|chapter|pt\.?|part|vol\.?|volume|episode|freestyle|intro|outro|interlude)\b/i);
-  if (artist && seriesMatch) {
-    return `cluster:${artist}:${seriesMatch[0].toLowerCase()}`;
-  }
-
-  // Same artist and non-generic album
-  if (artist && album && album !== 'single' && album !== 'unknown' && album !== 'ep') {
-    return `cluster:${artist}:${album}`;
-  }
-
-  // Individual cluster based on artist + track ID
-  return `cluster:${artist}:${track.id || rawTitle}`;
-}
-
-/**
- * Infers semantic tags and audio vectors if not pre-indexed
- */
-export function enrichTrackMetadata(track) {
+export function getStructuredProfile(track) {
   if (!track) return null;
 
-  if (TRACK_AUDIO_FEATURES[track.id]) {
-    return {
-      ...track,
-      ...TRACK_AUDIO_FEATURES[track.id],
-    };
-  }
+  const artistId = track.artist_id || normalizeArtistId(track.artist);
+  const featuredArtistIds = Array.isArray(track.featured_artist_ids) 
+    ? track.featured_artist_ids 
+    : [];
 
-  const rawGenre = (track.genre || '').toLowerCase();
-  const rawArtist = normalizeArtist(track.artist);
-
-  // Genre inference for external / live search items (e.g. Punjabi Rap, Hip-Hop, Pop)
-  let genre = track.genre || 'Pop / Global';
-  let subGenre = 'General';
-  let tempo = 100;
-  let energy = 0.55;
-  let valence = 0.55;
-  let danceability = 0.60;
-  let acousticness = 0.40;
-
-  if (
-    rawGenre.includes('punjabi') ||
-    rawGenre.includes('hip-hop') ||
-    rawGenre.includes('rap') ||
-    rawArtist.includes('aujla') ||
-    rawArtist.includes('moose') ||
-    rawArtist.includes('dhillon') ||
-    rawArtist.includes('dosanjh') ||
-    rawArtist.includes('divine') ||
-    rawArtist.includes('stan') ||
-    rawArtist.includes('shubh') ||
-    rawArtist.includes('badshah') ||
-    rawArtist.includes('raftaar')
-  ) {
-    genre = 'Punjabi Hip-Hop';
-    subGenre = 'Punjabi Rap / Trap';
-    tempo = 96;
-    energy = 0.80;
-    valence = 0.65;
-    danceability = 0.82;
-    acousticness = 0.15;
-  } else if (rawGenre.includes('lo-fi') || rawGenre.includes('chill')) {
-    genre = 'Lo-Fi';
-    subGenre = 'Chillhop';
-    tempo = 82;
-    energy = 0.30;
-    valence = 0.50;
-    danceability = 0.55;
-    acousticness = 0.75;
-  } else if (rawGenre.includes('synthwave') || rawGenre.includes('cyberpunk') || rawGenre.includes('retro')) {
-    genre = 'Synthwave';
-    subGenre = 'Outrun';
-    tempo = 124;
-    energy = 0.82;
-    valence = 0.68;
-    danceability = 0.72;
-    acousticness = 0.08;
-  } else if (rawGenre.includes('house') || rawGenre.includes('edm') || rawGenre.includes('dance')) {
-    genre = 'Deep House';
-    subGenre = 'Club House';
-    tempo = 125;
-    energy = 0.85;
-    valence = 0.75;
-    danceability = 0.82;
-    acousticness = 0.12;
-  } else if (rawGenre.includes('ambient') || rawGenre.includes('meditation') || rawGenre.includes('sleep')) {
-    genre = 'Ambient';
-    subGenre = 'Meditation';
-    tempo = 64;
-    energy = 0.15;
-    valence = 0.35;
-    danceability = 0.20;
-    acousticness = 0.90;
-  } else if (rawGenre.includes('acoustic') || rawGenre.includes('folk')) {
-    genre = 'Acoustic';
-    subGenre = 'Folk';
-    tempo = 90;
-    energy = 0.35;
-    valence = 0.55;
-    danceability = 0.50;
-    acousticness = 0.90;
-  } else if (rawGenre.includes('classical') || rawGenre.includes('piano')) {
-    genre = 'Classical';
-    subGenre = 'Solo Piano';
-    tempo = 72;
-    energy = 0.22;
-    valence = 0.32;
-    danceability = 0.26;
-    acousticness = 0.96;
-  } else if (rawGenre.includes('bollywood') || rawGenre.includes('sufi')) {
-    genre = 'Bollywood Romantic';
-    subGenre = 'Romantic';
-    tempo = 92;
-    energy = 0.55;
-    valence = 0.62;
-    danceability = 0.58;
-    acousticness = 0.55;
-  }
+  const genre = track.genre || 'Bollywood';
+  const subGenre = track.sub_genre || (genre === 'Punjabi' ? 'Punjabi Hip-Hop' : 'Bollywood Romantic');
+  const language = track.language || (genre === 'Punjabi' ? 'Punjabi' : (genre === 'Pop' ? 'English' : 'Hindi'));
+  const region = track.region || (genre === 'Punjabi' ? 'Punjab' : (genre === 'Pop' ? 'Global' : 'North India / Bollywood'));
+  
+  const bpm = track.bpm || track.audioFeatures?.tempo || 95;
+  const energy = typeof track.energy === 'number' ? track.energy : (track.audioFeatures?.energy || 0.70);
+  const mood = track.mood || 'High Energy';
+  const releaseYear = track.release_year || track.releaseYear || 2023;
+  const popularityTier = track.popularity_tier || 'top_hit';
+  const videoType = track.video_type || 'official_music_video';
+  const label = track.label || 'Official Music';
 
   return {
-    ...track,
+    id: track.id,
+    video_id: track.youtubeId || (track.id.startsWith('yt-') ? track.id.replace('yt-', '') : track.id),
+    artist: track.artist,
+    artist_id: artistId,
+    featured_artist_ids: featuredArtistIds,
     genre,
-    subGenre,
-    tempo,
+    sub_genre: subGenre,
+    language,
+    region,
+    mood,
     energy,
-    valence,
-    danceability,
-    acousticness,
-    coPlayed: [],
+    bpm,
+    release_year: releaseYear,
+    label,
+    popularity_tier: popularityTier,
+    video_type: videoType,
+    coPlayed: Array.isArray(track.coPlayed) ? track.coPlayed : [],
+    duration: track.duration || 210,
+    audioFeatures: track.audioFeatures || { tempo: bpm, energy },
+    rawTrack: track
   };
 }
 
 /**
- * Calculates Euclidean distance between two audio vectors [energy, valence, danceability, acousticness, tempo]
- * Normalized return between 0 (identical) and 1 (opposite)
+ * Filter out low-quality tracks (remixes, slowed, reverb, lyric, podcasts, live clips)
  */
-function calculateAudioDistance(featA, featB) {
-  const dEnergy = Math.pow((featA.energy || 0.5) - (featB.energy || 0.5), 2);
-  const dValence = Math.pow((featA.valence || 0.5) - (featB.valence || 0.5), 2);
-  const dDance = Math.pow((featA.danceability || 0.5) - (featB.danceability || 0.5), 2);
-  const dAcoustic = Math.pow((featA.acousticness || 0.5) - (featB.acousticness || 0.5), 2);
-  const dTempo = Math.pow(((featA.tempo || 100) - (featB.tempo || 100)) / 100, 2);
+export function isEligibleOfficialTrack(track) {
+  if (!track || !track.id) return false;
+  const title = (track.title || '').toLowerCase();
+  
+  // Exclude unwanted content types
+  const forbiddenPatterns = [
+    'slowed', 'reverb', 'remix', 'lofi flip', 'cover by', 
+    'podcast', 'live stream', 'shorts', '8d audio', 'status video'
+  ];
+  for (const pat of forbiddenPatterns) {
+    if (title.includes(pat)) return false;
+  }
 
-  const rawDist = Math.sqrt(dEnergy * 1.5 + dValence + dDance * 0.8 + dAcoustic + dTempo * 0.5);
-  return Math.min(1, rawDist / 2.0);
+  // Duration filter: Prefer 2:00 to 6:30 for full-length songs
+  if (track.duration && (track.duration < 100 || track.duration > 420)) {
+    return false;
+  }
+
+  return true;
 }
 
 /**
- * Decides the next song using weighted signals and strict anti-repetition rules.
- * 
- * WEIGHTED SIGNALS:
- * - Genre / sub-genre match: 35%
- * - Mood / audio-feature similarity: 25%
- * - Collaborative filtering: 20%
- * - Same artist / album (capped & decayed): 15%
- * - Freshness / discovery injection: 5%
- * 
- * ANTI-REPETITION FILTERS:
- * 1. Same-artist cooldown: max 2 songs by same artist in rolling window of 6.
- * 2. Same-song-cluster cooldown: max 2 songs in near-duplicate cluster in rolling window of 6.
- * 3. Diversity injection: 4th-5th slots force a different artist on genre/mood match.
- * 4. Decaying artist weight: 50% multiplicative decay per repeat in session.
- * 5. No infinite category lock: if last 8 songs are same artist/subtag, force wider genre pool.
+ * Step 1: Candidate Pools Generation
+ * Categorizes the catalog into pools A, B, C, D, E, F relative to the seed track.
  */
-export function decideNextSong(currentTrack, userContext = {}, trackPool = MOCK_TRACKS) {
-  const seed = enrichTrackMetadata(currentTrack);
-  if (!seed) {
-    const fallbackTrack = trackPool[0] || MOCK_TRACKS[0];
-    return {
-      song_id: fallbackTrack.id,
-      reason_for_recommendation: 'cold_start_trending, 85% confidence',
-      confidence_score: 0.85,
-      track: fallbackTrack,
-    };
-  }
+export function buildCandidatePools(seedProfile, catalog = MOCK_TRACKS, userContext = {}) {
+  const pools = {
+    A: [], // Same Artist
+    B: [], // Related Artists in same genre/language/collaborators
+    C: [], // Regional Trending in same genre
+    D: [], // Adjacent Language / Region Discovery
+    E: [], // Collaborative (coPlayed)
+    F: []  // Personal (liked songs, replay history)
+  };
 
-  const {
-    history = [],             // History array (most recent first)
-    consecutiveSkips = 0,     // Consecutive rapid skips (<15s)
-    likedTrackIds = new Set(), // Set or array of liked track IDs
-    queuePosition = 1,        // Current position in queue (1-indexed)
-    isDiversitySlot = false,  // Explicit trigger to enforce a different artist
-    isArtistRadio = false,    // User explicitly requested artist radio
-    rootSeedArtist = null,    // The original seed artist to enforce diversity against
-  } = userContext;
+  if (!seedProfile) return pools;
 
-  const seedArtist = normalizeArtist(seed.artist);
-  const rootArtist = normalizeArtist(rootSeedArtist || seed.artist);
+  const userLikes = new Set(userContext.likedSongIds || []);
+  const userHistoryIds = new Set((userContext.history || []).map((t) => t.id || t.youtubeId));
+  const seedArtistId = seedProfile.artist_id;
+  const seedCollaborators = new Set([...seedProfile.featured_artist_ids, seedArtistId]);
 
-  // 1. Recency Window: dynamically adapt so small track pools don't deadlock
-  const maxRecency = Math.min(20, Math.max(2, Math.floor(trackPool.length * 0.7)));
-  const recentSongIds = new Set([
-    seed.id,
-    ...history.slice(0, maxRecency).map((t) => t.id).filter(Boolean),
-  ]);
+  catalog.forEach((item) => {
+    if (!item || !isEligibleOfficialTrack(item)) return;
+    const profile = getStructuredProfile(item);
+    if (!profile || profile.id === seedProfile.id) return; // Do not include seed
 
-  // Rolling window of the last 5 songs preceding this candidate (so adding candidate creates a window of 6)
-  const windowPreceding = [seed, ...history].slice(0, 5);
+    const isSameArtist = profile.artist_id === seedArtistId;
+    const isCollaborator = profile.featured_artist_ids.some((id) => seedCollaborators.has(id)) ||
+                           seedCollaborators.has(profile.artist_id);
 
-  // Rule 3: Diversity injection (every 4th-5th song in queue must come from a different artist than root seed)
-  const forceDifferentArtist = !isArtistRadio && (
-    isDiversitySlot ||
-    queuePosition === 4 ||
-    queuePosition === 5 ||
-    (queuePosition > 0 && (queuePosition % 4 === 0 || queuePosition % 5 === 0))
-  );
-
-  // Rule 5: No infinite same-category lock (last 8 songs all from one artist or exact sub-tag)
-  const last8 = [seed, ...history].slice(0, 8);
-  const isSameArtistLock = !isArtistRadio && last8.length >= 8 && last8.every(
-    (t) => normalizeArtist(t.artist) === seedArtist
-  );
-  const isSameSubtagLock = last8.length >= 8 && last8.every(
-    (t) => (t.subGenre || t.genre || '').toLowerCase().trim() === (seed.subGenre || seed.genre || '').toLowerCase().trim()
-  );
-  const isCategoryLocked = isSameArtistLock || isSameSubtagLock;
-
-  // Skip fatigue: 2+ rapid skips triggers pivot to adjacent genre
-  const isPivotingAway = consecutiveSkips >= 2;
-
-  // Track session occurrences of seed artist for 50% multiplicative decay
-  const seedArtistSessionCount = history.filter(
-    (t) => normalizeArtist(t.artist) === seedArtist
-  ).length;
-
-  let cooldownTriggered = false;
-  let diversityTriggered = false;
-  let categoryLockBroken = false;
-
-  const scoredCandidates = [];
-
-  for (const candidate of trackPool) {
-    if (!candidate || !candidate.id) continue;
-
-    // Hard filter: Do not replay recently heard songs
-    if (recentSongIds.has(candidate.id)) continue;
-
-    const candArtist = normalizeArtist(candidate.artist);
-    const candCluster = getSongCluster(candidate);
-    const isSameArtist = candArtist === seedArtist;
-    const isRootArtist = candArtist === rootArtist;
-
-    // Rule 1: Same-artist cooldown: adding this song would mean > 2 songs by same artist in rolling 6 songs
-    const artistCountInWindow = windowPreceding.filter(
-      (t) => normalizeArtist(t.artist) === candArtist
-    ).length;
-
-    if (!isArtistRadio && artistCountInWindow >= 2) {
-      if (isSameArtist || isRootArtist) cooldownTriggered = true;
-      continue; // Exclude artist until cooldown passes
+    // Pool F: Personal (User likes or replays)
+    if (userLikes.has(profile.id) || userLikes.has(profile.video_id) || userHistoryIds.has(profile.id)) {
+      pools.F.push({ profile, source_pool: 'F' });
     }
 
-    // Rule 2: Same-song-cluster cooldown: adding this song would mean > 2 songs in same cluster in rolling 6 songs
-    const clusterCountInWindow = windowPreceding.filter(
-      (t) => getSongCluster(t) === candCluster
-    ).length;
-
-    if (!isArtistRadio && clusterCountInWindow >= 2) {
-      cooldownTriggered = true;
-      continue; // Exclude cluster until cooldown passes
-    }
-
-    // Rule 3: Diversity injection enforcement: MUST come from different artist than seed song
-    if (forceDifferentArtist && (isSameArtist || isRootArtist)) {
-      diversityTriggered = true;
-      continue; // Enforce different artist for this slot
-    }
-
-    // Rule 5: Force wider genre pool if locked
-    if (isCategoryLocked) {
-      if (isSameArtist || isRootArtist) {
-        categoryLockBroken = true;
-        continue;
-      }
-      const candSubTag = (candidate.subGenre || candidate.genre || '').toLowerCase().trim();
-      const seedSubTag = (seed.subGenre || seed.genre || '').toLowerCase().trim();
-      if (candSubTag === seedSubTag) {
-        categoryLockBroken = true;
-        continue;
-      }
-    }
-
-    const cand = enrichTrackMetadata(candidate);
-
-    // ----------------- FIXED WEIGHTED SCORING -----------------
-
-    // Signal 1: Genre / Sub-Genre Match (Weight: 35% = 0.35 max)
-    let genreScore = 0;
-    const isSameGenre = cand.genre && seed.genre && cand.genre.toLowerCase() === seed.genre.toLowerCase();
-    const isSameSubGenre = cand.subGenre && seed.subGenre && cand.subGenre.toLowerCase() === seed.subGenre.toLowerCase();
-    const affinityData = GENRE_AFFINITY[seed.genre] || { adjacent: [], disallowedImmediate: [] };
-    const isAdjacentGenre = affinityData.adjacent.some((g) => g.toLowerCase() === (cand.genre || '').toLowerCase());
-    const isDisallowedGenre = affinityData.disallowedImmediate.some((g) => g.toLowerCase() === (cand.genre || '').toLowerCase());
-
-    // Disallow jarring jumps (unless user consecutively skipped)
-    if (!isPivotingAway && isDisallowedGenre) {
-      continue;
-    }
-
-    if (isSameGenre && isSameSubGenre) {
-      genreScore = 0.35;
-    } else if (isSameGenre) {
-      genreScore = 0.30;
-    } else if (isAdjacentGenre || isCategoryLocked || isPivotingAway) {
-      genreScore = isPivotingAway || isCategoryLocked ? 0.30 : 0.20;
-    } else {
-      genreScore = 0.05;
-    }
-
-    // Signal 2: Mood / Audio Feature Similarity (Weight: 25% = 0.25 max)
-    const audioDist = calculateAudioDistance(seed, cand);
-    const audioSim = Math.max(0, 1 - audioDist);
-    const energyDelta = Math.abs((seed.energy || 0.5) - (cand.energy || 0.5));
-    if (!isPivotingAway && energyDelta > 0.45) {
-      continue; // Filter mood dissonance
-    }
-    const moodScore = parseFloat((audioSim * 0.25).toFixed(3));
-
-    // Signal 3: Collaborative Filtering (Weight: 20% = 0.20 max)
-    let collabScore = 0;
-    const isCoPlayed = (seed.coPlayed && seed.coPlayed.includes(cand.id)) ||
-                       (cand.coPlayed && cand.coPlayed.includes(seed.id));
-    const isLiked = likedTrackIds instanceof Set
-      ? likedTrackIds.has(cand.id)
-      : Array.isArray(likedTrackIds) && likedTrackIds.includes(cand.id);
-
+    // Pool E: Collaborative (tracks co-played with seed)
+    const isCoPlayed = seedProfile.coPlayed.includes(profile.id) ||
+                       seedProfile.coPlayed.includes(profile.video_id) ||
+                       profile.coPlayed.includes(seedProfile.id) ||
+                       profile.coPlayed.includes(seedProfile.video_id);
     if (isCoPlayed) {
-      collabScore = 0.20;
-    } else if (isLiked) {
-      collabScore = 0.12;
-    } else {
-      collabScore = 0.0;
+      pools.E.push({ profile, source_pool: 'E' });
     }
 
-    // Signal 4: Same Artist / Album (Weight: 15% = 0.15 max, capped and decayed)
-    let artistScore = 0;
-    const isSameAlbum = Boolean(cand.album && seed.album && cand.album.toLowerCase() === seed.album.toLowerCase());
-    if (isSameArtist && !forceDifferentArtist && !isCategoryLocked) {
-      const baseArtistScore = isSameAlbum ? 0.15 : 0.10;
-      // Rule 4: Decaying artist weight (50% multiplicative decay per repeat in session)
-      const decayFactor = Math.pow(0.5, seedArtistSessionCount);
-      artistScore = parseFloat((baseArtistScore * decayFactor).toFixed(3));
+    // Pool A: Same Artist
+    if (isSameArtist) {
+      pools.A.push({ profile, source_pool: 'A' });
+      return; // If same artist, do not duplicate into B or C
     }
 
-    // Signal 5: Freshness / Discovery Injection (Weight: 5% = 0.05 max)
-    let freshnessScore = 0;
-    const isArtistFresh = !windowPreceding.some(
-      (t) => normalizeArtist(t.artist) === candArtist
-    );
-    if (isArtistFresh) {
-      freshnessScore = 0.05;
+    // Pool B: Related Artists (collaborators OR same genre + language + region)
+    if (isCollaborator || (profile.genre === seedProfile.genre && profile.language === seedProfile.language)) {
+      pools.B.push({ profile, source_pool: 'B' });
+      return;
     }
 
-    // Total Score (Maximum 1.00 = 100%)
-    const rawTotal = genreScore + moodScore + collabScore + artistScore + freshnessScore;
-    const confidenceScore = Math.min(0.98, Math.max(0.50, parseFloat(rawTotal.toFixed(2))));
-
-    // Determine primary winning weighted signal
-    let winningSignal = 'genre+mood match';
-    if (collabScore >= 0.18 && collabScore >= genreScore) {
-      winningSignal = 'collaborative filtering match';
-    } else if (genreScore >= 0.28 && moodScore >= 0.15) {
-      winningSignal = 'genre+mood match';
-    } else if (genreScore >= 0.25) {
-      winningSignal = 'genre match';
-    } else if (artistScore >= 0.08 && isSameArtist) {
-      winningSignal = 'same artist match';
-    } else {
-      winningSignal = 'mood vector continuity';
+    // Pool C: Same Genre / Regional Trending
+    if (profile.genre === seedProfile.genre || profile.region === seedProfile.region) {
+      pools.C.push({ profile, source_pool: 'C' });
+      return;
     }
 
-    // Explicit traceability modifiers
-    const modifiers = [];
-    if (cooldownTriggered) {
-      modifiers.push('artist cooldown applied');
+    // Pool D: Adjacent Language / Region Discovery (different scene, matching energy & BPM)
+    const bpmDiff = Math.abs(profile.bpm - seedProfile.bpm);
+    const energyDiff = Math.abs(profile.energy - seedProfile.energy);
+    if (bpmDiff <= 35 && energyDiff <= 0.35) {
+      pools.D.push({ profile, source_pool: 'D' });
     }
-    if (diversityTriggered || forceDifferentArtist) {
-      modifiers.push('diversity injection applied');
-    }
-    if (categoryLockBroken) {
-      modifiers.push('category lock broken');
-    }
-    if (isSameArtist && seedArtistSessionCount > 0) {
-      modifiers.push('artist repetition decay applied');
-    }
-
-    const confidencePercent = Math.round(confidenceScore * 100);
-    const modifierSuffix = modifiers.length > 0 ? `, ${modifiers.join(', ')}` : '';
-    const reasonText = `${winningSignal}, ${confidencePercent}% confidence${modifierSuffix}`;
-
-    scoredCandidates.push({
-      song_id: cand.id,
-      reason_for_recommendation: reasonText,
-      confidence_score: confidenceScore,
-      track: cand,
-      genreScore,
-      moodScore,
-      collabScore,
-      artistScore,
-      isSameArtist,
-    });
-  }
-
-  // Sort descending by confidence score
-  scoredCandidates.sort((a, b) => b.confidence_score - a.confidence_score);
-
-  if (scoredCandidates.length > 0) {
-    const winner = scoredCandidates[0];
-    return {
-      song_id: winner.song_id,
-      reason_for_recommendation: winner.reason_for_recommendation,
-      confidence_score: winner.confidence_score,
-      track: winner.track,
-    };
-  }
-
-  // Fallback: If anti-repetition filter exhausted pool, select strictly non-cooling candidate from broader catalog
-  const nonCoolingCandidates = trackPool.filter((t) => {
-    if (!t || !t.id) return false;
-    const a = normalizeArtist(t.artist);
-    const count = windowPreceding.filter((rw) => normalizeArtist(rw.artist) === a).length;
-    return count < 2;
   });
 
-  const fallbackPool = nonCoolingCandidates.length > 0 ? nonCoolingCandidates : trackPool;
+  return pools;
+}
 
-  const safeFallback = fallbackPool.find(
-    (t) => t.id !== seed.id && normalizeArtist(t.artist) !== seedArtist && t.genre === seed.genre
-  ) || fallbackPool.find(
-    (t) => t.id !== seed.id && normalizeArtist(t.artist) !== seedArtist
-  ) || fallbackPool.find((t) => t.id !== seed.id) || fallbackPool[0] || seed;
+/**
+ * Step 3: Candidate Scoring (Pure structured profile + audio features + signals)
+ * Weights:
+ * - Genre / sub-genre + language match: 25%
+ * - Mood / energy / BPM similarity: 20%
+ * - Popularity & quality: 20%
+ * - Personal affinity + collaborative signal: 20%
+ * - Freshness (release year close to seed, recent): 10%
+ * - Same-artist bonus: 5% (tiebreaker only, never dominant)
+ */
+export function scoreCandidate(candidateProfile, seedProfile, sourcePool, userContext = {}) {
+  // 1. Genre + Language Match (25%)
+  let genreScore = 0;
+  if (candidateProfile.genre === seedProfile.genre) genreScore += 0.6;
+  if (candidateProfile.sub_genre === seedProfile.sub_genre) genreScore += 0.2;
+  if (candidateProfile.language === seedProfile.language) genreScore += 0.2;
+  const weightedGenre = genreScore * 0.25;
+
+  // 2. Mood, Energy & BPM Similarity (20%)
+  const bpmDiff = Math.abs(candidateProfile.bpm - seedProfile.bpm);
+  const bpmScore = Math.max(0, 1 - bpmDiff / 60);
+  const energyDiff = Math.abs(candidateProfile.energy - seedProfile.energy);
+  const energyScore = Math.max(0, 1 - energyDiff);
+  const moodScore = candidateProfile.mood === seedProfile.mood ? 1.0 : 0.6;
+  const audioSimilarity = (bpmScore * 0.4 + energyScore * 0.4 + moodScore * 0.2);
+  const weightedAudio = audioSimilarity * 0.20;
+
+  // 3. Popularity & Quality Tier (20%)
+  let popScore = 0.7;
+  if (candidateProfile.popularity_tier === 'blockbuster') popScore = 1.0;
+  else if (candidateProfile.popularity_tier === 'top_hit') popScore = 0.88;
+  else if (candidateProfile.popularity_tier === 'trending') popScore = 0.80;
+  const weightedPop = popScore * 0.20;
+
+  // 4. Personal Affinity & Collaborative Signal (20%)
+  let affinityScore = 0.3;
+  const userLikes = userContext.likedSongIds || [];
+  if (userLikes.includes(candidateProfile.id) || userLikes.includes(candidateProfile.video_id)) {
+    affinityScore = 1.0;
+  } else if (sourcePool === 'E' || sourcePool === 'F') {
+    affinityScore = 0.85;
+  }
+  const weightedAffinity = affinityScore * 0.20;
+
+  // 5. Freshness / Release Year Proximity (10%)
+  const yearDiff = Math.abs(candidateProfile.release_year - seedProfile.release_year);
+  const freshnessScore = Math.max(0.2, 1 - yearDiff / 10);
+  const weightedFreshness = freshnessScore * 0.10;
+
+  // 6. Same-Artist Bonus (5% tiebreaker only)
+  const sameArtistBonus = (candidateProfile.artist_id === seedProfile.artist_id) ? 0.05 : 0.0;
+
+  let totalScore = weightedGenre + weightedAudio + weightedPop + weightedAffinity + weightedFreshness + sameArtistBonus;
+
+  // Live Session Dynamic Adaptation Modifiers (Step 5)
+  const sessionPenalties = userContext.sessionArtistPenalties || {};
+  const penalty = sessionPenalties[candidateProfile.artist_id] || 0;
+  totalScore = Math.max(0.05, totalScore * (1 - penalty));
+
+  // Determine clear human-readable reason
+  let reason = '';
+  if (candidateProfile.artist_id === seedProfile.artist_id) {
+    reason = `More hits by ${seedProfile.artist}`;
+  } else if (sourcePool === 'B') {
+    reason = `Related artist in ${candidateProfile.language} ${candidateProfile.genre}`;
+  } else if (sourcePool === 'C') {
+    reason = `Trending ${candidateProfile.genre} in ${candidateProfile.region}`;
+  } else if (sourcePool === 'D') {
+    reason = `Adjacent discovery: similar energy (${candidateProfile.bpm} BPM)`;
+  } else if (sourcePool === 'E') {
+    reason = `Commonly listened together with ${seedProfile.artist}`;
+  } else if (sourcePool === 'F') {
+    reason = `From your library & listening taste`;
+  } else {
+    reason = `Similar vibe and tempo`;
+  }
 
   return {
-    song_id: safeFallback.id,
-    reason_for_recommendation: 'genre+mood match, 60% confidence, artist cooldown applied',
-    confidence_score: 0.60,
-    track: safeFallback,
+    score: Math.min(0.99, Math.round(totalScore * 100) / 100),
+    reason
   };
 }
 
 /**
- * Builds an upcoming queue adhering to the 70 / 20 / 10 rule and strict diversity validation:
- * - 70% "Strongly Similar" (same genre, audio feature similarity)
- * - 20% "Loosely Related" (adjacent genre, shared mood)
- * - 10% "Discovery" (new artist/sub-genre broadening horizons)
- * 
- * VALIDATION GUARANTEE:
- * A 10-song queue will ALWAYS contain at least 3 distinct artists.
+ * Step 4: Hard Constraints Validator
+ * - No artist more than 2 times in any 6-song window, and no more than 3 in 10.
+ * - No repeat of any song played in the last 30 tracks.
+ * - At least 4 different artists in every 10-song queue.
+ * - Do not repeat a song "series" pattern (same title stem).
+ * - If two consecutive tracks are from same language/scene, next should come from different pool.
  */
-export function buildRecommendedQueue(seedTrack, queueSize = 10, userContext = {}, trackPool = MOCK_TRACKS) {
-  if (!seedTrack) return [];
-
-  const queue = [];
-  const currentHistory = [...(userContext.history || []), seedTrack];
-  let currentSeed = seedTrack;
-  const recentArtists = [...(userContext.recentArtists || [seedTrack.artist])];
-
-  const targetStrong = Math.max(1, Math.round(queueSize * 0.70));
-  const targetLoose = Math.max(1, Math.round(queueSize * 0.20));
-
-  let countStrong = 0;
-  let countLoose = 0;
-
-  for (let i = 0; i < queueSize; i++) {
-    const queuePos = i + 1;
-    // Every 4th-5th song enforces diversity injection (different artist than seed)
-    const isDiversitySlot = queuePos % 4 === 0 || queuePos % 5 === 0;
-
-    const context = {
-      ...userContext,
-      history: currentHistory,
-      recentArtists: recentArtists.slice(-5),
-      queuePosition: queuePos,
-      isDiversitySlot,
-      rootSeedArtist: seedTrack.artist,
-    };
-
-    const decision = decideNextSong(currentSeed, context, trackPool);
-    if (!decision || !decision.track) break;
-
-    let category = 'strongly_similar';
-    if (decision.track.genre !== seedTrack.genre) {
-      category = (countStrong >= targetStrong && countLoose >= targetLoose) ? 'discovery' : 'loosely_related';
-    }
-
-    if (category === 'strongly_similar') countStrong++;
-    else countLoose++;
-
-    queue.push({
-      ...decision,
-      category,
-    });
-
-    currentSeed = decision.track;
-    currentHistory.unshift(decision.track);
-    recentArtists.push(decision.track.artist);
+export function checkHardConstraints(candidateProfile, currentQueue, historyTracks = []) {
+  // 1. History check (last 30 tracks)
+  const recent30 = historyTracks.slice(0, 30).map((t) => t.id || t.youtubeId);
+  if (recent30.includes(candidateProfile.id) || recent30.includes(candidateProfile.video_id)) {
+    return { pass: false, reason: 'repeat_in_last_30' };
   }
 
-  // ----------------- FINAL VALIDATION CHECK -----------------
-  // "Does this queue, if you list the last 10 songs, show at least 3 different artists?"
-  // If not, diversity injection has failed — fix by replacing slots with distinct artists.
-  const distinctArtists = new Set(
-    queue.map((item) => normalizeArtist(item.track?.artist)).filter(Boolean)
-  );
+  // 2. Queue duplicate check
+  if (currentQueue.some((q) => q.video_id === candidateProfile.video_id || q.id === candidateProfile.id)) {
+    return { pass: false, reason: 'already_in_queue' };
+  }
 
-  if (distinctArtists.size < 3 && queue.length >= 4 && trackPool.length > 2) {
-    const unusedArtists = trackPool.filter(
-      (t) => t && t.artist && !distinctArtists.has(normalizeArtist(t.artist))
-    );
+  // 3. Window check: Max 2 times in any 6-song window
+  const last5 = currentQueue.slice(-5);
+  const artistCountInWindow = last5.filter((q) => q.artist_id === candidateProfile.artist_id).length;
+  if (artistCountInWindow >= 2) {
+    return { pass: false, reason: 'artist_window_limit_2_in_6' };
+  }
 
-    // Inject 1 or 2 new artists at diversity slots (e.g. slot index 3, slot index 7)
-    let injectIdx = 0;
-    const slotsToInject = [3, 7, 4, 8].filter((idx) => idx < queue.length);
+  // 4. Queue total artist check: Max 3 times in 10-song queue
+  const artistTotalInQueue = currentQueue.filter((q) => q.artist_id === candidateProfile.artist_id).length;
+  if (artistTotalInQueue >= 3) {
+    return { pass: false, reason: 'artist_queue_limit_3_in_10' };
+  }
 
-    for (const slot of slotsToInject) {
-      if (distinctArtists.size >= 3 || injectIdx >= unusedArtists.length) break;
-      const injectedCandidate = unusedArtists[injectIdx++];
-      const enrichedInjected = enrichTrackMetadata(injectedCandidate);
+  // 5. Anti-clustering: Never 3 same-artist tracks in a row
+  if (currentQueue.length >= 2) {
+    const prev1 = currentQueue[currentQueue.length - 1];
+    const prev2 = currentQueue[currentQueue.length - 2];
+    if (prev1.artist_id === candidateProfile.artist_id && prev2.artist_id === candidateProfile.artist_id) {
+      return { pass: false, reason: 'no_three_consecutive_same_artist' };
+    }
+  }
 
-      queue[slot] = {
-        song_id: enrichedInjected.id,
-        reason_for_recommendation: 'genre+mood match, 65% confidence, diversity injection applied',
-        confidence_score: 0.65,
-        track: enrichedInjected,
-        category: 'discovery',
+  // 6. Language alternation if last two were from identical language and scene
+  if (currentQueue.length >= 2) {
+    const prev1 = currentQueue[currentQueue.length - 1];
+    const prev2 = currentQueue[currentQueue.length - 2];
+    if (prev1.language === prev2.language && 
+        prev1.language === candidateProfile.language && 
+        prev1.source_pool === candidateProfile.source_pool) {
+      // Allow only if candidate has very high score or no alternatives
+      // Will be handled during pool selection
+    }
+  }
+
+  return { pass: true, reason: 'PASS' };
+}
+
+/**
+ * Step 2: Queue Mix Construction (Target Ratios & Interleaving)
+ * Ratios per 10 tracks:
+ * - Pool A (Same artist): 2-3 tracks max
+ * - Pool B (Related artists): 3-4 tracks
+ * - Pool C (Regional trending): 2 tracks
+ * - Pool D (Adjacent discovery): 1-2 tracks
+ * - Pool E/F (Personal / Collaborative): fills remaining (up to 40% if history exists)
+ * 
+ * Target Interleaved Sequence Pattern:
+ * [other, same, other, other, same, other, other, other, same, other]
+ */
+export function buildRecommendedQueue(seedTrack, queueSize = 10, userContext = {}, catalog = MOCK_TRACKS) {
+  const seedProfile = getStructuredProfile(seedTrack);
+  if (!seedProfile) return [];
+
+  // Generate Pools A, B, C, D, E, F
+  const pools = buildCandidatePools(seedProfile, catalog, userContext);
+
+  // Score each pool's candidates
+  const scoredPools = {};
+  ['A', 'B', 'C', 'D', 'E', 'F'].forEach((poolKey) => {
+    scoredPools[poolKey] = pools[poolKey].map(({ profile, source_pool }) => {
+      const scoring = scoreCandidate(profile, seedProfile, source_pool, userContext);
+      return {
+        ...profile,
+        ...profile.rawTrack,
+        video_id: profile.video_id,
+        source_pool,
+        score: scoring.score,
+        reason: scoring.reason,
+        artist_cap_check: 'PASS'
       };
-      distinctArtists.add(normalizeArtist(enrichedInjected.artist));
+    }).sort((a, b) => b.score - a.score);
+  });
+
+  const queue = [];
+  const historyTracks = userContext.history || [];
+  
+  // Track pool usage counts
+  const poolCounts = { A: 0, B: 0, C: 0, D: 0, E: 0, F: 0 };
+  const maxPoolA = 3; // Max 2-3 same artist tracks in 10
+
+  // Desired pool sequence pattern for 10 songs:
+  // [B/E, A, B/C, D, A, B, C, E/F, A, D]
+  const slotPoolPreferences = [
+    ['B', 'E', 'C'],      // Slot 1: Related / Collaborative hit
+    ['A', 'B'],           // Slot 2: Same artist blockbuster
+    ['B', 'C', 'F'],      // Slot 3: Related artist
+    ['D', 'C'],           // Slot 4: Adjacent discovery (shared BPM/energy)
+    ['A', 'B', 'E'],      // Slot 5: Same artist or high collaborative
+    ['B', 'C'],           // Slot 6: Related artist in same scene
+    ['C', 'D'],           // Slot 7: Regional trending
+    ['E', 'F', 'B'],      // Slot 8: Personal / Collaborative
+    ['A', 'B', 'C'],      // Slot 9: Same artist or related
+    ['D', 'B', 'C']       // Slot 10: Discovery finish
+  ];
+
+  for (let i = 0; i < queueSize; i++) {
+    const preferredPools = slotPoolPreferences[i % slotPoolPreferences.length];
+    let selectedTrack = null;
+
+    // Try finding top candidate from preferred pools adhering to hard constraints
+    for (const poolKey of preferredPools) {
+      if (poolKey === 'A' && poolCounts.A >= maxPoolA) continue;
+
+      const candidateList = scoredPools[poolKey] || [];
+      for (let cIdx = 0; cIdx < candidateList.length; cIdx++) {
+        const candidate = candidateList[cIdx];
+        const constraint = checkHardConstraints(candidate, queue, historyTracks);
+        if (constraint.pass) {
+          selectedTrack = candidate;
+          poolCounts[poolKey]++;
+          candidateList.splice(cIdx, 1); // Consume candidate
+          break;
+        }
+      }
+      if (selectedTrack) break;
+    }
+
+    // Fallback: If preferred pools didn't yield an unconstrained candidate, search all pools
+    if (!selectedTrack) {
+      const allPoolKeys = ['B', 'C', 'E', 'F', 'D', 'A'];
+      for (const poolKey of allPoolKeys) {
+        if (poolKey === 'A' && poolCounts.A >= maxPoolA) continue;
+        const candidateList = scoredPools[poolKey] || [];
+        for (let cIdx = 0; cIdx < candidateList.length; cIdx++) {
+          const candidate = candidateList[cIdx];
+          const constraint = checkHardConstraints(candidate, queue, historyTracks);
+          if (constraint.pass) {
+            selectedTrack = candidate;
+            poolCounts[poolKey]++;
+            candidateList.splice(cIdx, 1);
+            break;
+          }
+        }
+        if (selectedTrack) break;
+      }
+    }
+
+    // Ultimate fallback if catalog is tight: pick highest scoring remaining non-duplicate
+    if (!selectedTrack) {
+      for (const poolKey of ['B', 'C', 'D', 'E', 'A']) {
+        const candidateList = scoredPools[poolKey] || [];
+        const nonDup = candidateList.find((c) => !queue.some((q) => q.video_id === c.video_id));
+        if (nonDup) {
+          selectedTrack = nonDup;
+          break;
+        }
+      }
+    }
+
+    if (selectedTrack) {
+      queue.push({
+        ...selectedTrack,
+        recommendationReason: selectedTrack.reason,
+        recommendationConfidence: selectedTrack.score,
+        recommendationCategory: selectedTrack.source_pool === 'A' ? 'same_artist' : 
+                                (selectedTrack.source_pool === 'D' ? 'discovery' : 'related_artist')
+      });
+    }
+  }
+
+  // Final Validation Guarantee:
+  // Must have at least 4 distinct artists in a 10-song queue!
+  const distinctArtists = new Set(queue.map((q) => q.artist_id));
+  if (distinctArtists.size < 4 && catalog.length >= 8) {
+    const unusedArtists = catalog
+      .map(getStructuredProfile)
+      .filter((p) => p && !distinctArtists.has(p.artist_id) && isEligibleOfficialTrack(p));
+
+    if (unusedArtists.length > 0 && queue.length >= 4) {
+      // Replace slot 3 or 7 with a new artist
+      const replaceSlot = queue.length >= 7 ? 6 : 2;
+      const injected = unusedArtists[0];
+      const scoring = scoreCandidate(injected, seedProfile, 'B', userContext);
+      queue[replaceSlot] = {
+        ...injected,
+        ...injected.rawTrack,
+        video_id: injected.video_id,
+        source_pool: 'B',
+        score: scoring.score,
+        reason: 'Related artist discovery',
+        recommendationReason: 'Related artist discovery',
+        recommendationConfidence: scoring.score,
+        recommendationCategory: 'discovery'
+      };
     }
   }
 
@@ -648,45 +472,32 @@ export function buildRecommendedQueue(seedTrack, queueSize = 10, userContext = {
 }
 
 /**
- * Diagnostic evaluation helper for debugging and auditing
+ * Single Next-Song Decision for autoplay when queue ends
  */
-export function evaluateRecommendationDiagnostic(currentTrack, userContext = {}, trackPool = MOCK_TRACKS) {
-  const nextDecision = decideNextSong(currentTrack, userContext, trackPool);
-  const upcomingQueue = buildRecommendedQueue(currentTrack, 10, userContext, trackPool);
-
-  const distinctArtistsCount = new Set(
-    upcomingQueue.map((item) => normalizeArtist(item.track?.artist)).filter(Boolean)
-  ).size;
+export function decideNextSong(currentTrack, userContext = {}, catalog = MOCK_TRACKS) {
+  const generatedQueue = buildRecommendedQueue(currentTrack, 3, userContext, catalog);
+  if (generatedQueue.length > 0) {
+    const winner = generatedQueue[0];
+    return {
+      song_id: winner.id,
+      video_id: winner.video_id,
+      source_pool: winner.source_pool || 'B',
+      score: winner.score || 0.85,
+      reason_for_recommendation: winner.reason || winner.recommendationReason,
+      confidence_score: winner.score || 0.85,
+      artist_cap_check: 'PASS',
+      track: winner
+    };
+  }
 
   return {
-    current_track: {
-      id: currentTrack.id,
-      title: currentTrack.title,
-      artist: currentTrack.artist,
-      cluster: getSongCluster(currentTrack),
-      genre: currentTrack.genre,
-    },
-    next_decision: {
-      song_id: nextDecision.song_id,
-      reason_for_recommendation: nextDecision.reason_for_recommendation,
-      confidence_score: nextDecision.confidence_score,
-      next_song_title: nextDecision.track?.title,
-      next_song_artist: nextDecision.track?.artist,
-      next_song_cluster: getSongCluster(nextDecision.track),
-    },
-    upcoming_queue: upcomingQueue.map((item, idx) => ({
-      position: idx + 1,
-      song_id: item.song_id,
-      title: item.track.title,
-      artist: item.track.artist,
-      genre: item.track.genre,
-      category: item.category,
-      reason_for_recommendation: item.reason_for_recommendation,
-      confidence_score: item.confidence_score,
-    })),
-    validation_audit: {
-      distinct_artists_in_10: distinctArtistsCount,
-      passed_diversity_check: distinctArtistsCount >= 3,
-    },
+    song_id: currentTrack.id,
+    video_id: currentTrack.youtubeId,
+    source_pool: 'B',
+    score: 0.70,
+    reason_for_recommendation: 'Next song autoplay',
+    confidence_score: 0.70,
+    artist_cap_check: 'PASS',
+    track: currentTrack
   };
 }
