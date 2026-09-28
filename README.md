@@ -79,13 +79,22 @@ personal-music/
 - **Anti-Throttling HD Canvas**: YouTube background playback executes inside a `1280px × 720px` off-screen frame, forcing YouTube CDNs to deliver studio-quality 160–256 kbps Opus/AAC audio streams rather than downgraded 48 kbps low-res audio.
 - **Topic Channel Prioritization**: Search engines prioritize official studio master tracks (`- Topic` releases and verified label uploads) while de-ranking noisy fan concert recordings and bootlegs.
 
-### 3. Smart Recommendation Engine (Zero Diversity Collapse)
-- **Mathematical 5-Tier Scoring**:
-  $$\text{FinalScore} = 35\%(\text{Genre}) + 25\%(\text{Mood/Audio Vector}) + 20\%(\text{Collab}) + 15\%(\text{Artist}) + 5\%(\text{Freshness})$$
-- **Anti-Repetition Cooldowns**: Rolling 6-song window prevents artist monopolies and title keyword looping.
-- **Controlled Discovery**: Every 4th or 5th queue recommendation automatically injects an adjacent genre exploration track.
+### 3. YouTube Mix Autoplay & Next-Track Engine (Zero Keyword Bias)
+- **Structured Song Profiles**: Recommendation seeds rely on rich multidimensional song metadata (genre, sub-genre, language, region, audio vector, and collaborative affinity) rather than raw title text.
+- **Dynamic Multi-Pool Candidate Selection**:
+  - **Pool A**: Same-artist top tracks (capped at 2–3 per 10).
+  - **Pool B**: Related artists sharing genre, language, region, and known collaborators.
+  - **Pool C**: Regional trending chartbusters within the same genre.
+  - **Pool D**: Discovery pool matching energy and tempo while introducing adjacent dialects/styles.
+  - **Pool E**: Collaborative sessions and frequently co-played tracks.
+- **Skip Fatigue Real-Time Adaptation**: Real-time penalty against artists skipped within 30 seconds.
 
-### 4. Enterprise Legal & Regulatory Compliance
+### 4. Seamless Onboarding & User Experience
+- **Auth Gate with Guest Access**: App-start welcome screen provides immediate account sign-up and sign-in, with instant guest bypass option.
+- **Top 50 India & Spotify-Style Home**: Real-time trending tracks, Bollywood blockbusters, and Punjabi chartbusters with verified official cover artwork.
+- **Local Search History**: Seamless persistent tracking of played tracks from search with one-click clear history.
+
+### 5. Enterprise Legal & Regulatory Compliance
 - **India DPDP Act 2023 & GDPR Ready**: Granular affirmative cookie consent mechanism, right-to-forget data erasure, explicit form consent, and registered Data Fiduciary disclosure.
 - **Dedicated Legal Suite**: Dedicated `/privacy-policy`, `/terms-and-conditions`, `/cookie-policy`, `/refund-policy`, and `/business-details` routes.
 
