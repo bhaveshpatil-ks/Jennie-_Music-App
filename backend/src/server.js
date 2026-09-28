@@ -75,7 +75,9 @@ app.get('/', (req, res) => {
     status: 'active',
     endpoints: {
       health: '/health',
+      auth: '/api/auth',
       tracks: '/api/tracks',
+      recommendations: '/api/tracks/:id/recommendations',
       playlists: '/api/playlists',
       favorites: '/api/favorites',
       catalog: '/api/catalog',
