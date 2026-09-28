@@ -134,18 +134,28 @@ export const TopHeader = () => {
           <span>Jennie Cloud</span>
         </div>
 
-        {/* User Auth Section (Desktop only - mobile has dedicated bottom nav tab) */}
+        {/* User Auth Section */}
         {!user ? (
-          <button
-            type="button"
-            onClick={() => openAuthModal('login')}
-            className="hidden md:flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-zinc-100 hover:bg-white text-zinc-950 text-xs font-bold transition-all shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-zinc-400"
-          >
-            <User size={13} className="stroke-[2.5]" />
-            <span>Sign In</span>
-          </button>
+          <div className="flex items-center gap-1.5 sm:gap-2">
+            <button
+              type="button"
+              onClick={() => openAuthModal('login')}
+              className="px-2.5 sm:px-3 py-1.5 rounded-full text-neutral-300 hover:text-white hover:bg-white/10 text-xs font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-zinc-400"
+            >
+              Sign In
+            </button>
+            <button
+              type="button"
+              onClick={() => openAuthModal('register')}
+              className="flex items-center gap-1.5 px-3 sm:px-3.5 py-1.5 rounded-full bg-white hover:bg-neutral-200 text-black text-xs font-bold transition-all shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-zinc-400 active:scale-95"
+            >
+              <User size={13} className="stroke-[2.5]" />
+              <span className="hidden sm:inline">Create Account</span>
+              <span className="sm:hidden">Sign Up</span>
+            </button>
+          </div>
         ) : (
-          <div className="relative hidden md:block" ref={menuRef}>
+          <div className="relative" ref={menuRef}>
             <button
               type="button"
               onClick={() => setIsMenuOpen(!isMenuOpen)}

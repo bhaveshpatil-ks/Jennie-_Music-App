@@ -2,7 +2,6 @@ import { create } from 'zustand';
 import { MOCK_TRACKS } from '../data/mockTracks';
 import { shuffleArray } from '../utils/formatters';
 import { decideNextSong, buildRecommendedQueue } from '../services/recommendationEngine';
-import { useAuthStore } from './useAuthStore';
 
 // Singleton HTML5 Audio instance for real audio streaming (Jamendo & Audius)
 let globalAudio = null;
@@ -224,13 +223,6 @@ export const usePlayerStore = create((set, get) => {
     playTrack: (track, newQueue = null) => {
       if (!track) return;
 
-      // Require user authentication to play songs
-      const authState = useAuthStore.getState();
-      if (!authState.user) {
-        authState.openAuthModal('login', 'Please sign in or create an account to stream music on Jennie!');
-        return;
-      }
-
       const currentQueue = newQueue || get().queue;
       let targetIndex = currentQueue.findIndex((t) => t.id === track.id);
       let updatedQueue = currentQueue;
@@ -354,13 +346,6 @@ export const usePlayerStore = create((set, get) => {
         set({ isPlaying: false });
         syncMediaSession(currentTrack, false);
       } else {
-        // Require user authentication to play songs
-        const authState = useAuthStore.getState();
-        if (!authState.user) {
-          authState.openAuthModal('login', 'Please sign in or create an account to stream music on Jennie!');
-          return;
-        }
-
         if (isYouTube) {
           startSilentCarrier();
           const ytId = currentTrack.youtubeId || (typeof currentTrack.id === 'string' && currentTrack.id.startsWith('yt-') ? currentTrack.id.replace('yt-', '') : null);
@@ -399,12 +384,6 @@ export const usePlayerStore = create((set, get) => {
     },
 
     resume: () => {
-      const authState = useAuthStore.getState();
-      if (!authState.user) {
-        authState.openAuthModal('login', 'Please sign in or create an account to stream music on Jennie!');
-        return;
-      }
-
       const { currentTrack, ytController } = get();
       const isYouTube = currentTrack?.source === 'youtube' || Boolean(currentTrack?.youtubeId);
       if (isYouTube) {

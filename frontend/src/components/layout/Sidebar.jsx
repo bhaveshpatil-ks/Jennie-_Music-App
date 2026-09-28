@@ -147,15 +147,24 @@ export const Sidebar = ({ onOpenCreatePlaylist }) => {
           <div className="p-3 rounded-2xl bg-gradient-to-b from-[#181818] to-[#101010] border border-white/5 space-y-2">
             <p className="text-xs font-semibold text-white">Join Jennie Cloud</p>
             <p className="text-[10px] text-neutral-400 leading-normal">
-              Sign in to sync your playlists and access lossless high-fidelity streams.
+              Sign in or create an account to sync your playlists and liked songs.
             </p>
-            <button
-              type="button"
-              onClick={() => openAuthModal('login')}
-              className="w-full py-1.5 px-3 rounded-xl bg-white hover:bg-neutral-200 text-black font-bold text-xs transition-colors shadow-sm"
-            >
-              Sign In
-            </button>
+            <div className="flex gap-2">
+              <button
+                type="button"
+                onClick={() => openAuthModal('register')}
+                className="flex-1 py-1.5 px-2 rounded-xl bg-white hover:bg-neutral-200 text-black font-bold text-xs transition-colors shadow-sm text-center cursor-pointer"
+              >
+                Sign Up
+              </button>
+              <button
+                type="button"
+                onClick={() => openAuthModal('login')}
+                className="flex-1 py-1.5 px-2 rounded-xl bg-neutral-800 hover:bg-neutral-700 text-white font-semibold text-xs transition-colors border border-white/10 text-center cursor-pointer"
+              >
+                Sign In
+              </button>
+            </div>
           </div>
         )}
 
