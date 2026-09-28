@@ -137,8 +137,10 @@ const SEED_CATALOG = [
 
 /**
  * Normalizes artist string for comparison
+ * @param {string} name
+ * @returns {string}
  */
-function normalizeArtist(name) {
+export function normalizeArtist(name) {
   if (!name || typeof name !== 'string') return '';
   return name.toLowerCase().replace(/ - topic$/i, '').replace(/\b(feat\.?|ft\.?)\b.*$/i, '').trim();
 }
