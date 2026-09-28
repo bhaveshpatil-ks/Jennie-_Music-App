@@ -191,6 +191,7 @@ export const WelcomeAuthScreen = ({ onEnterGuest }) => {
                 <input
                   type="email"
                   required
+                  autoComplete="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="name@example.com"
@@ -208,6 +209,7 @@ export const WelcomeAuthScreen = ({ onEnterGuest }) => {
                 <input
                   type={showPassword ? 'text' : 'password'}
                   required
+                  autoComplete={mode === 'register' ? 'new-password' : 'current-password'}
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder="At least 6 characters"
@@ -215,6 +217,7 @@ export const WelcomeAuthScreen = ({ onEnterGuest }) => {
                 />
                 <button
                   type="button"
+                  aria-label={showPassword ? 'Hide password' : 'Show password'}
                   onClick={() => setShowPassword(!showPassword)}
                   className="absolute right-3.5 top-1/2 -translate-y-1/2 text-neutral-500 hover:text-white transition-colors cursor-pointer"
                   tabIndex={-1}
