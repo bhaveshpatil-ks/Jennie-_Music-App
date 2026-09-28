@@ -15,12 +15,17 @@ The **Jennie Music Platform** is structured as an ultra-fast, minimalist luxury 
 ```
 Jennie Music Platform (https://jenniemusic.com)
 │
+├── 🚪 App Entry & Onboarding Gate
+│   ├── Full-Screen Welcome Auth Gate (WelcomeAuthScreen)
+│   │   ├── Brand Hero ("Millions of songs. Free on Jennie.")
+│   │   ├── Instant Log In / Create Account Tabs
+│   │   └── "Continue as Guest" Direct Listening Bypass
+│   │
 ├── 🎵 Main Music Application
 │   ├── / (Home)
-│   │   ├── Featured Hero Release
-│   │   ├── Trending Hits Row
-│   │   ├── Curated Genre Stations (Lo-Fi, Synthwave, Deep House, Ambient, Acoustic)
-│   │   └── Quick Start Listeners
+│   │   ├── Top 50 India Bollywood & Punjabi Chartbusters
+│   │   ├── India Most Played Songs (Kesariya, Sajni, Tauba Tauba, 52 Bars)
+│   │   └── Curated Hits Row with Verified Label Artwork
 │   │
 │   ├── /search (Search & Discovery)
 │   │   ├── Global Omni-Search Bar (Live keystroke debounced)
