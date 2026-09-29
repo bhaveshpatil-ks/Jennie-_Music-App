@@ -741,6 +741,50 @@ export const LYRICS_DATABASE = {
       }
     ]
   }
+,
+  'brown_munde': {
+    "key": "brown_munde",
+    "title": "Brown Munde",
+    "artist": "AP Dhillon, Gurinder Gill & Shinda Kahlon",
+    "lines": [
+      {
+        "time": 4,
+        "text": "♪ Heavy Trap Brass & 808s ♪"
+      },
+      {
+        "time": 12,
+        "text": "Brown Munde!"
+      },
+      {
+        "time": 20,
+        "text": "Desi jehe geet te trap di beat"
+      },
+      {
+        "time": 28,
+        "text": "Sire da shikari te sirre di cheez"
+      },
+      {
+        "time": 36,
+        "text": "Gaddiyan ch vajde ne geet brown mundeyan de"
+      },
+      {
+        "time": 46,
+        "text": "♪ Global Anthem Hook ♪"
+      },
+      {
+        "time": 58,
+        "text": "Toronto ton laike Punjab tak charche"
+      },
+      {
+        "time": 70,
+        "text": "Worldwide hunde dekh saare kharche"
+      },
+      {
+        "time": 82,
+        "text": "Brown Munde, Brown Munde!"
+      }
+    ]
+  }
 };
 
 /**
