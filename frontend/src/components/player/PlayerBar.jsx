@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { 
   Play, 
   Pause, 
@@ -10,12 +10,16 @@ import {
   ListMusic, 
   Maximize2, 
   ShieldCheck, 
-  Video
+  Video,
+  Mic2,
+  ListPlus
 } from 'lucide-react';
 import { usePlayerStore } from '../../store/usePlayerStore';
 import { LikeButton } from '../common/LikeButton';
 import { ProgressBar } from './ProgressBar';
 import { VolumeControl } from './VolumeControl';
+import { LyricsView } from './LyricsView';
+import { AddToPlaylistModal } from '../common/AddToPlaylistModal';
 import { getTrackCoverUrl } from '../../data/mockTracks';
 
 export const PlayerBar = () => {
@@ -35,6 +39,11 @@ export const PlayerBar = () => {
   const toggleVideoMode = usePlayerStore((state) => state.toggleVideoMode);
   const currentTime = usePlayerStore((state) => state.currentTime);
   const duration = usePlayerStore((state) => state.duration);
+  const isLyricsOpen = usePlayerStore((state) => state.isLyricsOpen);
+  const toggleLyrics = usePlayerStore((state) => state.toggleLyrics);
+  const setLyricsOpen = usePlayerStore((state) => state.setLyricsOpen);
+  const toastMessage = usePlayerStore((state) => state.toastMessage);
+  const [isPlaylistModalOpen, setIsPlaylistModalOpen] = useState(false);
 
   if (!currentTrack) return null;
   const isYouTubeTrack = currentTrack.source === 'youtube' || Boolean(currentTrack.youtubeId);
@@ -104,8 +113,19 @@ export const PlayerBar = () => {
               </button>
             )}
 
-            <div className="p-1">
-              <LikeButton trackId={currentTrack.id} size={18} />
+            <div className="flex items-center gap-0.5">
+              <button
+                type="button"
+                onClick={() => setIsPlaylistModalOpen(true)}
+                aria-label="Add to playlist"
+                title="Add to Playlist"
+                className="p-1.5 rounded-full text-neutral-400 hover:text-white transition-colors"
+              >
+                <ListPlus size={18} />
+              </button>
+              <div className="p-1">
+                <LikeButton trackId={currentTrack.id} size={18} />
+              </div>
             </div>
 
             <button
@@ -184,7 +204,16 @@ export const PlayerBar = () => {
               </div>
             </div>
 
-            <div className="flex-shrink-0">
+            <div className="flex items-center gap-1 flex-shrink-0">
+              <button
+                type="button"
+                onClick={() => setIsPlaylistModalOpen(true)}
+                aria-label="Add to playlist"
+                title="Add to Playlist"
+                className="p-1.5 rounded-full text-neutral-400 hover:text-white hover:bg-white/10 transition-colors"
+              >
+                <ListPlus size={18} />
+              </button>
               <LikeButton trackId={currentTrack.id} size={18} />
             </div>
           </div>
@@ -281,6 +310,20 @@ export const PlayerBar = () => {
               </button>
             )}
 
+            {/* Lyrics View Toggle Button */}
+            <button
+              type="button"
+              onClick={toggleLyrics}
+              aria-label={isLyricsOpen ? 'Close lyrics' : 'Open lyrics'}
+              aria-expanded={isLyricsOpen}
+              className={`p-2 rounded-full hover:bg-white/10 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white ${
+                isLyricsOpen ? 'text-white bg-white/10' : 'text-neutral-300 hover:text-white'
+              }`}
+              title="Lyrics"
+            >
+              <Mic2 size={17} />
+            </button>
+
             {/* Queue Drawer Button */}
             <button
               type="button"
@@ -314,6 +357,26 @@ export const PlayerBar = () => {
 
         </div>
       </footer>
+
+      {/* Add To Playlist Modal */}
+      <AddToPlaylistModal
+        isOpen={isPlaylistModalOpen}
+        onClose={() => setIsPlaylistModalOpen(false)}
+        track={currentTrack}
+      />
+
+      {/* Standalone Lyrics View Modal */}
+      <LyricsView
+        isOpen={isLyricsOpen}
+        onClose={() => setLyricsOpen(false)}
+      />
+
+      {/* Live Toast Feedback (e.g. Added to Queue) */}
+      {toastMessage && (
+        <div className="fixed bottom-24 left-1/2 -translate-x-1/2 z-50 px-4 py-2 rounded-full bg-white text-black font-semibold text-xs shadow-2xl flex items-center gap-2 animate-pop border border-neutral-200">
+          <span>{toastMessage}</span>
+        </div>
+      )}
     </>
   );
 };
