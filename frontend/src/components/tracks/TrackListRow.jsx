@@ -13,6 +13,8 @@ export const TrackListRow = ({ track, index, queue = null, onPlay = null }) => {
   const togglePlay = usePlayerStore((state) => state.togglePlay);
   const addToQueue = usePlayerStore((state) => state.addToQueue);
   const playNext = usePlayerStore((state) => state.playNext);
+  const openArtist = useLibraryStore((state) => state.openArtist);
+  const openAlbum = useLibraryStore((state) => state.openAlbum);
 
   const [menuOpen, setMenuOpen] = useState(false);
   const [isPlaylistModalOpen, setIsPlaylistModalOpen] = useState(false);
@@ -127,7 +129,15 @@ export const TrackListRow = ({ track, index, queue = null, onPlay = null }) => {
             </span>
           </div>
           <div className="flex items-center gap-1.5 mt-0.5">
-            <span className="text-[11px] sm:text-xs text-neutral-400 truncate">{track.artist}</span>
+            <span 
+              onClick={(e) => {
+                e.stopPropagation();
+                openArtist(track.artist);
+              }}
+              className="text-[11px] sm:text-xs text-neutral-400 hover:text-white hover:underline truncate cursor-pointer transition-colors"
+            >
+              {track.artist}
+            </span>
             <span className="hidden md:inline-block text-[9px] font-semibold text-neutral-300 bg-neutral-800 px-1.5 py-0.2 rounded">
               {track.license || 'Free'}
             </span>
@@ -136,7 +146,13 @@ export const TrackListRow = ({ track, index, queue = null, onPlay = null }) => {
       </div>
 
       {/* Col 3: Album (Desktop & Tablet) */}
-      <div className="hidden sm:block truncate text-xs text-neutral-400 font-medium pr-2">
+      <div 
+        onClick={(e) => {
+          e.stopPropagation();
+          openAlbum(track.album || track.title, track.artist);
+        }}
+        className="hidden sm:block truncate text-xs text-neutral-400 hover:text-white hover:underline font-medium pr-2 cursor-pointer transition-colors"
+      >
         {track.album || 'Single'}
       </div>
 

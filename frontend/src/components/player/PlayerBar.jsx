@@ -15,6 +15,7 @@ import {
   ListPlus
 } from 'lucide-react';
 import { usePlayerStore } from '../../store/usePlayerStore';
+import { useLibraryStore } from '../../store/useLibraryStore';
 import { LikeButton } from '../common/LikeButton';
 import { ProgressBar } from './ProgressBar';
 import { VolumeControl } from './VolumeControl';
@@ -23,6 +24,7 @@ import { AddToPlaylistModal } from '../common/AddToPlaylistModal';
 import { getTrackCoverUrl } from '../../data/mockTracks';
 
 export const PlayerBar = () => {
+  const openArtist = useLibraryStore((state) => state.openArtist);
   const currentTrack = usePlayerStore((state) => state.currentTrack);
   const isPlaying = usePlayerStore((state) => state.isPlaying);
   const togglePlay = usePlayerStore((state) => state.togglePlay);
@@ -85,7 +87,13 @@ export const PlayerBar = () => {
                 {currentTrack.title}
               </p>
               <div className="flex items-center gap-1.5 mt-0.5">
-                <p className="text-[11px] text-neutral-400 truncate">
+                <p 
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    openArtist(currentTrack.artist);
+                  }}
+                  className="text-[11px] text-neutral-400 hover:text-white hover:underline truncate cursor-pointer transition-colors"
+                >
                   {currentTrack.artist}
                 </p>
                 {isYouTubeTrack && (
@@ -191,7 +199,14 @@ export const PlayerBar = () => {
                 </h4>
               </div>
               <div className="flex items-center gap-2 mt-0.5">
-                <p className="text-xs text-neutral-400 truncate" title={currentTrack.artist}>
+                <p 
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    openArtist(currentTrack.artist);
+                  }}
+                  className="text-xs text-neutral-400 hover:text-white hover:underline truncate cursor-pointer transition-colors" 
+                  title={currentTrack.artist}
+                >
                   {currentTrack.artist}
                 </p>
                 <span 

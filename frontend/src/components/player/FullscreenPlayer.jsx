@@ -14,6 +14,7 @@ import {
   ListMusic
 } from 'lucide-react';
 import { usePlayerStore } from '../../store/usePlayerStore';
+import { useLibraryStore } from '../../store/useLibraryStore';
 import { getTrackCoverUrl } from '../../data/mockTracks';
 import { LikeButton } from '../common/LikeButton';
 import { ProgressBar } from './ProgressBar';
@@ -23,6 +24,7 @@ import { AddToPlaylistModal } from '../common/AddToPlaylistModal';
 
 export const FullscreenPlayer = () => {
   const isFullscreenOpen = usePlayerStore((state) => state.isFullscreenOpen);
+  const openArtist = useLibraryStore((state) => state.openArtist);
   const toggleFullscreen = usePlayerStore((state) => state.toggleFullscreen);
   const currentTrack = usePlayerStore((state) => state.currentTrack);
   const isPlaying = usePlayerStore((state) => state.isPlaying);
@@ -185,7 +187,15 @@ export const FullscreenPlayer = () => {
               <h1 className="text-2xl md:text-3xl font-bold text-white truncate tracking-tight">
                 {currentTrack.title}
               </h1>
-              <p className="text-base text-neutral-300 font-medium truncate mt-1">
+              <p 
+                onClick={(e) => {
+                  e.stopPropagation();
+                  toggleFullscreen();
+                  openArtist(currentTrack.artist);
+                }}
+                className="text-base text-neutral-300 hover:text-white hover:underline font-medium truncate mt-1 cursor-pointer transition-colors"
+                title={`View ${currentTrack.artist}'s profile`}
+              >
                 {currentTrack.artist}
               </p>
             </div>

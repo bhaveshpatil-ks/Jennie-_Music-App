@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Play, Pause, ListPlus, ListMusic } from 'lucide-react';
 import { usePlayerStore } from '../../store/usePlayerStore';
+import { useLibraryStore } from '../../store/useLibraryStore';
 import { LikeButton } from '../common/LikeButton';
 import { AddToPlaylistModal } from '../common/AddToPlaylistModal';
 import { getTrackCoverUrl } from '../../data/mockTracks';
@@ -11,6 +12,7 @@ export const TrackCard = ({ track, queue = null, showGenre = true }) => {
   const playTrack = usePlayerStore((state) => state.playTrack);
   const togglePlay = usePlayerStore((state) => state.togglePlay);
   const addToQueue = usePlayerStore((state) => state.addToQueue);
+  const openArtist = useLibraryStore((state) => state.openArtist);
 
   const [isPlaylistModalOpen, setIsPlaylistModalOpen] = useState(false);
 
@@ -127,7 +129,14 @@ export const TrackCard = ({ track, queue = null, showGenre = true }) => {
         >
           {track.title}
         </h4>
-        <p className="text-xs text-neutral-400 truncate mt-0.5 font-medium" title={track.artist}>
+        <p 
+          className="text-xs text-neutral-400 hover:text-white hover:underline truncate mt-0.5 font-medium cursor-pointer transition-colors" 
+          title={track.artist}
+          onClick={(e) => {
+            e.stopPropagation();
+            openArtist(track.artist);
+          }}
+        >
           {track.artist}
         </p>
 
