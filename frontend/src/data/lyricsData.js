@@ -373,6 +373,54 @@ export const LYRICS_DATABASE = {
       }
     ]
   }
+,
+  'heeriye': {
+    "key": "heeriye",
+    "title": "Heeriye",
+    "artist": "Jasleen Royal & Arijit Singh",
+    "lines": [
+      {
+        "time": 3,
+        "text": "♪ Acoustic Rhythm Intro ♪"
+      },
+      {
+        "time": 10,
+        "text": "Heeriye heeriye aa..."
+      },
+      {
+        "time": 18,
+        "text": "Teri hoke mar jaaniye"
+      },
+      {
+        "time": 26,
+        "text": "Heeriye heeriye aa..."
+      },
+      {
+        "time": 34,
+        "text": "Neendan vi kho gaiyaan, chain vi kho gaya"
+      },
+      {
+        "time": 42,
+        "text": "Ishq tere vich kamla ho gaya"
+      },
+      {
+        "time": 52,
+        "text": "♪ Whistle & Guitar Break ♪"
+      },
+      {
+        "time": 64,
+        "text": "Jadon main dekhan tenu ankhiyan na thakdiyan"
+      },
+      {
+        "time": 76,
+        "text": "Dooriyan yeh tere kolon methon naio katdiyan"
+      },
+      {
+        "time": 88,
+        "text": "Heeriye heeriye aa..."
+      }
+    ]
+  }
 };
 
 /**
