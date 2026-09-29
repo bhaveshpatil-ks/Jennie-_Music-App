@@ -686,6 +686,40 @@ export const ARTISTS_DATA = [
       "jubin_nautiyal"
     ]
   }
+,
+
+  {
+    "id": "sonu_nigam",
+    "name": "Sonu Nigam",
+    "aliases": [
+      "sonu nigam",
+      "sonu",
+      "sonunigam"
+    ],
+    "verified": true,
+    "monthlyListeners": "21,100,000",
+    "followers": "19,500,000",
+    "bio": "Sonu Nigam is a legendary Indian playback singer and live performer who has sung thousands of songs across dozens of languages over three decades.",
+    "avatarUrl": "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&w=600&q=80",
+    "bannerUrl": "https://images.unsplash.com/photo-1470225620780-dba8ba36b745?auto=format&fit=crop&w=1600&q=80",
+    "headerColor": "#B45309",
+    "genres": [
+      "Bollywood Classic",
+      "Romantic",
+      "Ghazal",
+      "Playback"
+    ],
+    "topTrackIds": [
+      "yt-Bi7sSC046dk"
+    ],
+    "albums": [],
+    "singles": [],
+    "relatedArtistIds": [
+      "arijit_singh",
+      "kumar_sanu",
+      "shreya_ghoshal"
+    ]
+  }
 ];
 
 /**
