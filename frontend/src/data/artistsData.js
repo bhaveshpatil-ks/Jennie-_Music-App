@@ -621,6 +621,39 @@ export const ARTISTS_DATA = [
       "arijit_singh"
     ]
   }
+,
+
+  {
+    "id": "neha_kakkar",
+    "name": "Neha Kakkar",
+    "aliases": [
+      "neha kakkar",
+      "neha",
+      "tony kakkar",
+      "sonu kakkar"
+    ],
+    "verified": true,
+    "monthlyListeners": "22,400,000",
+    "followers": "35,000,000",
+    "bio": "Neha Kakkar is an Indian playback singer known for high-energy Bollywood dance party tracks, romantic pop singles, and television appearances.",
+    "avatarUrl": "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=600&q=80",
+    "bannerUrl": "https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?auto=format&fit=crop&w=1600&q=80",
+    "headerColor": "#DB2777",
+    "genres": [
+      "Bollywood Dance",
+      "Pop",
+      "Party"
+    ],
+    "topTrackIds": [
+      "yt-LK7-_dgAVQE"
+    ],
+    "albums": [],
+    "singles": [],
+    "relatedArtistIds": [
+      "badshah",
+      "jubin_nautiyal"
+    ]
+  }
 ];
 
 /**
