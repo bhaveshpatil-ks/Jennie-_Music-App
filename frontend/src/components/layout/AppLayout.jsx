@@ -16,6 +16,8 @@ import {
   Library,
   Favorites,
   PlaylistDetail,
+  ArtistDetail,
+  AlbumDetail,
   PrivacyPolicy,
   TermsAndConditions,
   CookiePolicy,
@@ -146,7 +148,7 @@ export const AppLayout = () => {
       404: '/404',
     };
     const targetPath = pathToView[activeView];
-    if (targetPath && window.location.pathname !== targetPath && activeView !== 'genre' && activeView !== 'playlist') {
+    if (targetPath && window.location.pathname !== targetPath && !['genre', 'playlist', 'artist', 'album'].includes(activeView)) {
       window.history.pushState(null, '', targetPath);
     }
   }, [activeView]);
@@ -166,6 +168,10 @@ export const AppLayout = () => {
         return <PlaylistDetail playlist={selectedItem} isGenre={true} />;
       case 'playlist':
         return <PlaylistDetail playlist={selectedItem} isGenre={false} />;
+      case 'artist':
+        return <ArtistDetail artist={selectedItem} />;
+      case 'album':
+        return <AlbumDetail album={selectedItem} />;
       case 'privacy':
         return <PrivacyPolicy />;
       case 'terms':
