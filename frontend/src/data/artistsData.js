@@ -1343,6 +1343,35 @@ export const ARTISTS_DATA = [
       "the_weeknd"
     ]
   }
+,
+
+  {
+    "id": "dua_lipa",
+    "name": "Dua Lipa",
+    "aliases": [
+      "dua lipa",
+      "dua"
+    ],
+    "verified": true,
+    "monthlyListeners": "74,000,000",
+    "followers": "48,000,000",
+    "bio": "Dua Lipa is an English and Albanian singer and songwriter known for her signature mezzo-soprano vocal range and modern disco-pop bangers.",
+    "avatarUrl": "https://images.unsplash.com/photo-1522075469751-3a6694fb2f61?auto=format&fit=crop&w=600&q=80",
+    "bannerUrl": "https://images.unsplash.com/photo-1492684223066-81342ee5ff30?auto=format&fit=crop&w=1600&q=80",
+    "headerColor": "#7C3AED",
+    "genres": [
+      "Nu-Disco",
+      "Dance Pop"
+    ],
+    "topTrackIds": [
+      "yt-4NRXx6U8ABQ"
+    ],
+    "albums": [],
+    "singles": [],
+    "relatedArtistIds": [
+      "the_weeknd"
+    ]
+  }
 ];
 
 /**
