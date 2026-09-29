@@ -867,6 +867,51 @@ export const ARTISTS_DATA = [
       "pritam"
     ]
   }
+,
+
+  {
+    "id": "anirudh",
+    "name": "Anirudh Ravichander",
+    "aliases": [
+      "anirudh",
+      "anirudh ravichander",
+      "rockstar anirudh"
+    ],
+    "verified": true,
+    "monthlyListeners": "23,400,000",
+    "followers": "21,000,000",
+    "bio": "Anirudh Ravichander is an Indian music composer and singer known for explosive, high-energy soundtracks across Tamil, Telugu, and Hindi cinema (Jawan, Jailer, Leo, Vikram).",
+    "avatarUrl": "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=600&q=80",
+    "bannerUrl": "https://images.unsplash.com/photo-1514525253161-7a46d19cd819?auto=format&fit=crop&w=1600&q=80",
+    "headerColor": "#EA580C",
+    "genres": [
+      "High-Energy Pop",
+      "EDM Fusion",
+      "Action Score"
+    ],
+    "topTrackIds": [
+      "yt-sK7riqg2mr4"
+    ],
+    "albums": [
+      {
+        "id": "album-jawan-anirudh",
+        "title": "Jawan",
+        "type": "Album",
+        "releaseYear": 2023,
+        "coverUrl": "https://i.ytimg.com/vi/sK7riqg2mr4/hqdefault.jpg",
+        "trackIds": [
+          "yt-sK7riqg2mr4"
+        ],
+        "totalTracks": 7,
+        "genre": "Action Pop"
+      }
+    ],
+    "singles": [],
+    "relatedArtistIds": [
+      "arijit_singh",
+      "pritam"
+    ]
+  }
 ];
 
 /**
