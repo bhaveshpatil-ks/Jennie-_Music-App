@@ -829,6 +829,46 @@ export const LYRICS_DATABASE = {
       }
     ]
   }
+,
+  'last_ride': {
+    "key": "last_ride",
+    "title": "The Last Ride",
+    "artist": "Sidhu Moose Wala",
+    "lines": [
+      {
+        "time": 6,
+        "text": "♪ West Coast 90s G-Funk Whistle ♪"
+      },
+      {
+        "time": 15,
+        "text": "Ho chobbar de chehre utte noor dasda"
+      },
+      {
+        "time": 24,
+        "text": "Ni ehda uthuga jawani ch janaaza mithiye"
+      },
+      {
+        "time": 34,
+        "text": "The Last Ride!"
+      },
+      {
+        "time": 44,
+        "text": "Baaghi te anakh da swag wakhra"
+      },
+      {
+        "time": 54,
+        "text": "Kise de agge na kade jhukya ae sir"
+      },
+      {
+        "time": 66,
+        "text": "♪ West Coast Hip-Hop Bassline ♪"
+      },
+      {
+        "time": 78,
+        "text": "Legends never die, roohan amar hundiyan"
+      }
+    ]
+  }
 };
 
 /**
