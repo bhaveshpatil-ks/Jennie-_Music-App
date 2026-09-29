@@ -517,6 +517,50 @@ export const LYRICS_DATABASE = {
       }
     ]
   }
+,
+  'antidote': {
+    "key": "antidote",
+    "title": "Antidote",
+    "artist": "Karan Aujla",
+    "lines": [
+      {
+        "time": 4,
+        "text": "♪ Synthwave Melodic Intro ♪"
+      },
+      {
+        "time": 12,
+        "text": "Zeher vi tu te dawa vi tu"
+      },
+      {
+        "time": 20,
+        "text": "Meri rooh di har ik sazaa vi tu"
+      },
+      {
+        "time": 28,
+        "text": "Tere bina lagda ni dil kite hor"
+      },
+      {
+        "time": 36,
+        "text": "Tu hi mera antidote, tu hi rab da noor"
+      },
+      {
+        "time": 46,
+        "text": "♪ Atmospheric Beat Drop ♪"
+      },
+      {
+        "time": 58,
+        "text": "Lokan diyan galan utte kade na dhyan dita"
+      },
+      {
+        "time": 70,
+        "text": "Dil tere naam karke aapa sab dita"
+      },
+      {
+        "time": 82,
+        "text": "Antidote ban ke tu zindgi sambhali"
+      }
+    ]
+  }
 };
 
 /**
