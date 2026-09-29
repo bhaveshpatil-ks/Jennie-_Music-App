@@ -1281,6 +1281,38 @@ export const ARTISTS_DATA = [
       "the_weeknd"
     ]
   }
+,
+
+  {
+    "id": "bruno_mars",
+    "name": "Bruno Mars",
+    "aliases": [
+      "bruno mars",
+      "bruno",
+      "peter gene hernandez"
+    ],
+    "verified": true,
+    "monthlyListeners": "124,000,000",
+    "followers": "56,000,000",
+    "bio": "Peter Gene Hernandez, known professionally as Bruno Mars, is an American singer, songwriter, and record producer renowned for his retro showmanship and stage energy.",
+    "avatarUrl": "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=600&q=80",
+    "bannerUrl": "https://images.unsplash.com/photo-1501386761578-eac5c94b800a?auto=format&fit=crop&w=1600&q=80",
+    "headerColor": "#D97706",
+    "genres": [
+      "Funk",
+      "Soul",
+      "R&B",
+      "Pop"
+    ],
+    "topTrackIds": [
+      "yt-4NRXx6U8ABQ"
+    ],
+    "albums": [],
+    "singles": [],
+    "relatedArtistIds": [
+      "the_weeknd"
+    ]
+  }
 ];
 
 /**
