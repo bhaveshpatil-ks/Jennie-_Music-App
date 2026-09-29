@@ -1187,6 +1187,37 @@ export const ARTISTS_DATA = [
       "karan_aujla"
     ]
   }
+,
+
+  {
+    "id": "taylor_swift",
+    "name": "Taylor Swift",
+    "aliases": [
+      "taylor swift",
+      "taylor",
+      "swift"
+    ],
+    "verified": true,
+    "monthlyListeners": "108,000,000",
+    "followers": "115,000,000",
+    "bio": "Taylor Alison Swift is an American singer-songwriter whose narrative songwriting and cultural impact have earned her four Album of the Year Grammy Awards.",
+    "avatarUrl": "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=600&q=80",
+    "bannerUrl": "https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?auto=format&fit=crop&w=1600&q=80",
+    "headerColor": "#D97706",
+    "genres": [
+      "Pop",
+      "Synth-Pop",
+      "Folk Pop"
+    ],
+    "topTrackIds": [
+      "yt-34Na4j8AVgA"
+    ],
+    "albums": [],
+    "singles": [],
+    "relatedArtistIds": [
+      "the_weeknd"
+    ]
+  }
 ];
 
 /**
