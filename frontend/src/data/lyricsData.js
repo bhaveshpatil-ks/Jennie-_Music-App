@@ -653,6 +653,50 @@ export const LYRICS_DATABASE = {
       }
     ]
   }
+,
+  'dil_nu': {
+    "key": "dil_nu",
+    "title": "Dil Nu",
+    "artist": "AP Dhillon",
+    "lines": [
+      {
+        "time": 5,
+        "text": "♪ 80s Synthwave Arpeggio ♪"
+      },
+      {
+        "time": 14,
+        "text": "Dil nu tere naal kina pyar ae"
+      },
+      {
+        "time": 22,
+        "text": "Sanu te dasna vi nai aunda"
+      },
+      {
+        "time": 30,
+        "text": "Tere bina rehna vi hun dushwaar ae"
+      },
+      {
+        "time": 38,
+        "text": "Sanu te hasna vi nai aunda"
+      },
+      {
+        "time": 48,
+        "text": "♪ Retro Synth Pad Drop ♪"
+      },
+      {
+        "time": 60,
+        "text": "Akhiyan ch tu hi tu vasi ae"
+      },
+      {
+        "time": 72,
+        "text": "Saahan ch tu hi samayi ae"
+      },
+      {
+        "time": 84,
+        "text": "Dil nu tere naal kina pyar ae..."
+      }
+    ]
+  }
 };
 
 /**
