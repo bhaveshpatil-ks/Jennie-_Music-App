@@ -720,6 +720,55 @@ export const ARTISTS_DATA = [
       "shreya_ghoshal"
     ]
   }
+,
+
+  {
+    "id": "honey_singh",
+    "name": "Yo Yo Honey Singh",
+    "aliases": [
+      "honey singh",
+      "yo yo honey singh",
+      "yoyo honey singh",
+      "honey",
+      "yoyo"
+    ],
+    "verified": true,
+    "monthlyListeners": "16,900,000",
+    "followers": "21,000,000",
+    "bio": "Hirdesh Singh, known professionally as Yo Yo Honey Singh, is an Indian music producer, rapper, singer, and songwriter who revolutionized Desi hip-hop and commercial rap in mainstream Indian cinema.",
+    "avatarUrl": "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=600&q=80",
+    "bannerUrl": "https://images.unsplash.com/photo-1514525253161-7a46d19cd819?auto=format&fit=crop&w=1600&q=80",
+    "headerColor": "#D97706",
+    "genres": [
+      "Desi Hip-Hop",
+      "Commercial Rap",
+      "Punjabi Pop"
+    ],
+    "topTrackIds": [
+      "yt-LK7-_dgAVQE",
+      "yt-4DfVxVeqk2o"
+    ],
+    "albums": [
+      {
+        "id": "album-glory",
+        "title": "GLORY",
+        "type": "Album",
+        "releaseYear": 2024,
+        "coverUrl": "https://i.ytimg.com/vi/LK7-_dgAVQE/hqdefault.jpg",
+        "trackIds": [
+          "yt-LK7-_dgAVQE"
+        ],
+        "totalTracks": 18,
+        "genre": "Desi Rap"
+      }
+    ],
+    "singles": [],
+    "relatedArtistIds": [
+      "badshah",
+      "karan_aujla",
+      "diljit_dosanjh"
+    ]
+  }
 ];
 
 /**
