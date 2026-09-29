@@ -260,7 +260,8 @@ export const YouTubePlayerEmbed = () => {
     return () => clearInterval(watchdogInterval);
   }, [sendIframeCommand]);
 
-  const iframeSrc = `https://www.youtube-nocookie.com/embed/${activeVideoId}?enablejsapi=1&autoplay=1&playsinline=1&rel=0&iv_load_policy=3&modestbranding=1&controls=0`;
+  const iframeOrigin = typeof window !== 'undefined' ? window.location.origin : '';
+  const iframeSrc = `https://www.youtube-nocookie.com/embed/${activeVideoId}?enablejsapi=1&autoplay=1&playsinline=1&rel=0&iv_load_policy=3&modestbranding=1&controls=0${iframeOrigin ? `&origin=${encodeURIComponent(iframeOrigin)}` : ''}`;
 
   return (
     <div
@@ -268,7 +269,7 @@ export const YouTubePlayerEmbed = () => {
       className={`transition-all duration-300 ${
         isVideoMode && isYouTubeTrack
           ? 'fixed bottom-24 right-4 md:right-8 w-72 sm:w-80 md:w-96 aspect-video bg-black/95 rounded-2xl shadow-2xl border border-white/10 overflow-hidden backdrop-blur-md z-50 pointer-events-auto opacity-100'
-          : 'fixed -top-[9999px] -left-[9999px] w-[320px] h-[180px] pointer-events-none opacity-100 overflow-hidden'
+          : 'fixed bottom-0 right-0 w-[200px] h-[112px] opacity-[0.01] pointer-events-none z-[-1] overflow-hidden'
       }`}
       aria-hidden={!isVideoMode}
     >
@@ -297,7 +298,7 @@ export const YouTubePlayerEmbed = () => {
         ref={iframeRef}
         key={activeVideoId}
         src={iframeSrc}
-        allow="autoplay; encrypted-media; picture-in-picture"
+        allow="autoplay; encrypted-media; picture-in-picture; accelerometer; gyroscope; web-share"
         className="w-full h-full border-0 pointer-events-auto"
         title="Jennie Audio Engine"
         onLoad={handleIframeLoad}
