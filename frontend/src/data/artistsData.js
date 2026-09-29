@@ -912,6 +912,39 @@ export const ARTISTS_DATA = [
       "pritam"
     ]
   }
+,
+
+  {
+    "id": "alka_yagnik",
+    "name": "Alka Yagnik",
+    "aliases": [
+      "alka yagnik",
+      "alka",
+      "alkayagnik"
+    ],
+    "verified": true,
+    "monthlyListeners": "24,000,000",
+    "followers": "22,000,000",
+    "bio": "Alka Yagnik is an iconic Indian playback singer with a career spanning over four decades and thousands of unforgettable Hindi cinema melodies.",
+    "avatarUrl": "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=600&q=80",
+    "bannerUrl": "https://images.unsplash.com/photo-1501386761578-eac5c94b800a?auto=format&fit=crop&w=1600&q=80",
+    "headerColor": "#F43F5E",
+    "genres": [
+      "Bollywood Classic",
+      "Romantic Melody",
+      "Playback"
+    ],
+    "topTrackIds": [
+      "yt-Bi7sSC046dk"
+    ],
+    "albums": [],
+    "singles": [],
+    "relatedArtistIds": [
+      "kumar_sanu",
+      "shreya_ghoshal",
+      "sonu_nigam"
+    ]
+  }
 ];
 
 /**
