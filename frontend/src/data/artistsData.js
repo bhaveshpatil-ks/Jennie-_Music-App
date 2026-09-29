@@ -834,6 +834,39 @@ export const ARTISTS_DATA = [
       "pritam"
     ]
   }
+,
+
+  {
+    "id": "sachin_jigar",
+    "name": "Sachin-Jigar",
+    "aliases": [
+      "sachin jigar",
+      "sachin-jigar",
+      "sachin",
+      "jigar"
+    ],
+    "verified": true,
+    "monthlyListeners": "20,800,000",
+    "followers": "9,500,000",
+    "bio": "Sachin-Jigar is an Indian music composer duo consisting of Sachin Sanghvi and Jigar Saraiya. Known for Bhediya (Apna Bana Le), Stree 2, Badlapur, and ABCD.",
+    "avatarUrl": "https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?auto=format&fit=crop&w=600&q=80",
+    "bannerUrl": "https://images.unsplash.com/photo-1470225620780-dba8ba36b745?auto=format&fit=crop&w=1600&q=80",
+    "headerColor": "#10B981",
+    "genres": [
+      "Bollywood Pop",
+      "Romantic",
+      "Dance"
+    ],
+    "topTrackIds": [
+      "yt-ElZfdU54Cp8"
+    ],
+    "albums": [],
+    "singles": [],
+    "relatedArtistIds": [
+      "arijit_singh",
+      "pritam"
+    ]
+  }
 ];
 
 /**
