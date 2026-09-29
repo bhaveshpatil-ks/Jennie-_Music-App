@@ -469,6 +469,54 @@ export const LYRICS_DATABASE = {
       }
     ]
   }
+,
+  'winning_speech': {
+    "key": "winning_speech",
+    "title": "Winning Speech",
+    "artist": "Karan Aujla",
+    "lines": [
+      {
+        "time": 2,
+        "text": "♪ Heavy 808 Brass Intro ♪"
+      },
+      {
+        "time": 8,
+        "text": "Yeah, Karan Aujla, Mxrci!"
+      },
+      {
+        "time": 14,
+        "text": "Kamm karke dikhaiye na galan kitiyan"
+      },
+      {
+        "time": 22,
+        "text": "Kitiyan ni aapa kade gairtiyan"
+      },
+      {
+        "time": 30,
+        "text": "Ohi yaar khade jede pehlan khade si"
+      },
+      {
+        "time": 38,
+        "text": "Sadde naam diyan town ch rallyan chaliyan"
+      },
+      {
+        "time": 48,
+        "text": "♪ Hard-Hitting Drill Beat Drop ♪"
+      },
+      {
+        "time": 60,
+        "text": "Winning speech dinde jede haar mande si"
+      },
+      {
+        "time": 72,
+        "text": "Kall de ne chhore sadde geet gaande si"
+      },
+      {
+        "time": 84,
+        "text": "Rehnde geetan di machine kehnde saare jagg te"
+      }
+    ]
+  }
 };
 
 /**
