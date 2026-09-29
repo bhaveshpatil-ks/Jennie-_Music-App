@@ -1153,6 +1153,40 @@ export const ARTISTS_DATA = [
       "badshah"
     ]
   }
+,
+
+  {
+    "id": "seedhe_maut",
+    "name": "Seedhe Maut",
+    "aliases": [
+      "seedhe maut",
+      "sm",
+      "encore abj",
+      "calm",
+      "nanchaku"
+    ],
+    "verified": true,
+    "monthlyListeners": "3,800,000",
+    "followers": "2,400,000",
+    "bio": "Seedhe Maut is a New Delhi-based hip-hop duo consisting of Siddhant Sharma (Calm) and Abhijay Negi (Encore ABJ), celebrated as pioneers of modern DHH lyricism.",
+    "avatarUrl": "https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?auto=format&fit=crop&w=600&q=80",
+    "bannerUrl": "https://images.unsplash.com/photo-1514525253161-7a46d19cd819?auto=format&fit=crop&w=1600&q=80",
+    "headerColor": "#DC2626",
+    "genres": [
+      "Delhi Underground Rap",
+      "Desi Hip-Hop",
+      "Trap"
+    ],
+    "topTrackIds": [
+      "yt-4DfVxVeqk2o"
+    ],
+    "albums": [],
+    "singles": [],
+    "relatedArtistIds": [
+      "divine",
+      "karan_aujla"
+    ]
+  }
 ];
 
 /**
