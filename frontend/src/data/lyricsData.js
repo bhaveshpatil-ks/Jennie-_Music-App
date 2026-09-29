@@ -325,6 +325,54 @@ export const LYRICS_DATABASE = {
       }
     ]
   }
+,
+  'satranga': {
+    "key": "satranga",
+    "title": "Satranga",
+    "artist": "Arijit Singh",
+    "lines": [
+      {
+        "time": 6,
+        "text": "♪ Melodic Flute Intro ♪"
+      },
+      {
+        "time": 15,
+        "text": "Adha tera ishq adha mera"
+      },
+      {
+        "time": 23,
+        "text": "Aise judte huye banta pura"
+      },
+      {
+        "time": 32,
+        "text": "Ho satranga yeh ishq re"
+      },
+      {
+        "time": 40,
+        "text": "Har rang tera hi chahe re"
+      },
+      {
+        "time": 50,
+        "text": "Yeh ishq satranga hai mera"
+      },
+      {
+        "time": 62,
+        "text": "♪ Emotional Sarangi Bridge ♪"
+      },
+      {
+        "time": 75,
+        "text": "Tera hi deedar chahoonga main"
+      },
+      {
+        "time": 86,
+        "text": "Tujhse hi har baat keh paoonga main"
+      },
+      {
+        "time": 98,
+        "text": "Satranga yeh ishq re"
+      }
+    ]
+  }
 };
 
 /**
