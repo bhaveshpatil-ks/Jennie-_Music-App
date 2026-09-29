@@ -1088,6 +1088,38 @@ export const ARTISTS_DATA = [
       "mc_stan"
     ]
   }
+,
+
+  {
+    "id": "mc_stan",
+    "name": "MC Stan",
+    "aliases": [
+      "mc stan",
+      "stan",
+      "altaf shaikh",
+      "basti ka hasti"
+    ],
+    "verified": true,
+    "monthlyListeners": "5,800,000",
+    "followers": "11,200,000",
+    "bio": "Altaf Tadavi, known professionally as MC Stan, is an Indian rapper and music producer from Pune, Maharashtra known for pioneering modern new-school trap music in India.",
+    "avatarUrl": "https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?auto=format&fit=crop&w=600&q=80",
+    "bannerUrl": "https://images.unsplash.com/photo-1514525253161-7a46d19cd819?auto=format&fit=crop&w=1600&q=80",
+    "headerColor": "#6B7280",
+    "genres": [
+      "New School Trap",
+      "Desi Rap"
+    ],
+    "topTrackIds": [
+      "yt-4DfVxVeqk2o"
+    ],
+    "albums": [],
+    "singles": [],
+    "relatedArtistIds": [
+      "divine",
+      "emiway_bantai"
+    ]
+  }
 ];
 
 /**
