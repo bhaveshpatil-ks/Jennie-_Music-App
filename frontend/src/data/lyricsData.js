@@ -605,6 +605,54 @@ export const LYRICS_DATABASE = {
       }
     ]
   }
+,
+  'naina_crew': {
+    "key": "naina_crew",
+    "title": "Naina (Crew)",
+    "artist": "Diljit Dosanjh & Badshah",
+    "lines": [
+      {
+        "time": 4,
+        "text": "♪ Funky R&B Groove Intro ♪"
+      },
+      {
+        "time": 12,
+        "text": "Naina tere kajrare, naina tere matwale"
+      },
+      {
+        "time": 20,
+        "text": "Jadon takke dil te teer chalave"
+      },
+      {
+        "time": 28,
+        "text": "Diljit Dosanjh in the house!"
+      },
+      {
+        "time": 36,
+        "text": "Kudiye tu kardi kamaal soniye"
+      },
+      {
+        "time": 44,
+        "text": "Naina naal kardi shikaar soniye"
+      },
+      {
+        "time": 54,
+        "text": "♪ Badshah Rap Verse ♪"
+      },
+      {
+        "time": 66,
+        "text": "Its your boy Badshah!"
+      },
+      {
+        "time": 76,
+        "text": "Baby teri chaal jaise runway model"
+      },
+      {
+        "time": 86,
+        "text": "Tere naina jaise poori daaru ki bottle"
+      }
+    ]
+  }
 };
 
 /**
