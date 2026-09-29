@@ -1008,6 +1008,53 @@ export const ARTISTS_DATA = [
       "sonu_nigam"
     ]
   }
+,
+
+  {
+    "id": "divine",
+    "name": "DIVINE",
+    "aliases": [
+      "divine",
+      "gully gang",
+      "vivian divine",
+      "vivian fernandes"
+    ],
+    "verified": true,
+    "monthlyListeners": "7,900,000",
+    "followers": "6,400,000",
+    "bio": "Vivian Fernandes, known as DIVINE, is the pioneer of the Mumbai Gully Rap movement that brought Indian street hip-hop into the international spotlight.",
+    "avatarUrl": "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=600&q=80",
+    "bannerUrl": "https://images.unsplash.com/photo-1514525253161-7a46d19cd819?auto=format&fit=crop&w=1600&q=80",
+    "headerColor": "#1E293B",
+    "genres": [
+      "Desi Hip-Hop",
+      "Gully Rap",
+      "Boom Bap"
+    ],
+    "topTrackIds": [
+      "yt-pXRviuL6vMY"
+    ],
+    "albums": [
+      {
+        "id": "album-street-dreams-divine",
+        "title": "Street Dreams (with Karan Aujla)",
+        "type": "Album",
+        "releaseYear": 2024,
+        "coverUrl": "https://i.ytimg.com/vi/pXRviuL6vMY/hqdefault.jpg",
+        "trackIds": [
+          "yt-pXRviuL6vMY"
+        ],
+        "totalTracks": 7,
+        "genre": "Desi Hip-Hop"
+      }
+    ],
+    "singles": [],
+    "relatedArtistIds": [
+      "karan_aujla",
+      "badshah",
+      "sidhu_moose_wala"
+    ]
+  }
 ];
 
 /**
