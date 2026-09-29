@@ -976,6 +976,38 @@ export const ARTISTS_DATA = [
       "sonu_nigam"
     ]
   }
+,
+
+  {
+    "id": "kk",
+    "name": "KK (Krishnakumar Kunnath)",
+    "aliases": [
+      "kk",
+      "krishnakumar kunnath",
+      "kay kay"
+    ],
+    "verified": true,
+    "monthlyListeners": "19,800,000",
+    "followers": "18,000,000",
+    "bio": "Krishnakumar Kunnath, popularly known as KK, was one of India’s most beloved vocalists whose raw, heartfelt voice defined the youth anthems of a generation.",
+    "avatarUrl": "https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?auto=format&fit=crop&w=600&q=80",
+    "bannerUrl": "https://images.unsplash.com/photo-1470225620780-dba8ba36b745?auto=format&fit=crop&w=1600&q=80",
+    "headerColor": "#4F46E5",
+    "genres": [
+      "Indie Rock",
+      "Romantic Ballad",
+      "Bollywood"
+    ],
+    "topTrackIds": [
+      "yt-Bi7sSC046dk"
+    ],
+    "albums": [],
+    "singles": [],
+    "relatedArtistIds": [
+      "arijit_singh",
+      "sonu_nigam"
+    ]
+  }
 ];
 
 /**
