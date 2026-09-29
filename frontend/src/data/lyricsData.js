@@ -273,6 +273,58 @@ export const LYRICS_DATABASE = {
       }
     ]
   }
+,
+  'apna_bana_le': {
+    "key": "apna_bana_le",
+    "title": "Apna Bana Le",
+    "artist": "Arijit Singh & Sachin-Jigar",
+    "lines": [
+      {
+        "time": 4,
+        "text": "♪ Gentle Strings Intro ♪"
+      },
+      {
+        "time": 12,
+        "text": "Tu mera koi na hoke bhi kuch laage"
+      },
+      {
+        "time": 20,
+        "text": "Kiya re jo bhi tune kaise kiya re"
+      },
+      {
+        "time": 28,
+        "text": "Jiya ko mere baandh aise liya re"
+      },
+      {
+        "time": 36,
+        "text": "Dildara, dildara, yeh jaan le gaya re"
+      },
+      {
+        "time": 46,
+        "text": "Apna bana le piya, apna bana le piya"
+      },
+      {
+        "time": 54,
+        "text": "Dil ke nagar mein shehar tu basa le piya"
+      },
+      {
+        "time": 64,
+        "text": "♪ Instrumental Interlude ♪"
+      },
+      {
+        "time": 78,
+        "text": "Chhoone se tere haan tere haan tere"
+      },
+      {
+        "time": 88,
+        "text": "Pheeki padi hain sabhi yeh lakerien"
+      },
+      {
+        "time": 98,
+        "text": "Apna bana le piya, apna bana le piya"
+      }
+    ]
+  }
 };
 
 /**
