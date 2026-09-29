@@ -1249,6 +1249,38 @@ export const ARTISTS_DATA = [
       "the_weeknd"
     ]
   }
+,
+
+  {
+    "id": "drake",
+    "name": "Drake",
+    "aliases": [
+      "drake",
+      "champagnepapi",
+      "aubrey graham",
+      "drizzy"
+    ],
+    "verified": true,
+    "monthlyListeners": "88,900,000",
+    "followers": "85,000,000",
+    "bio": "Aubrey Drake Graham is a Canadian rapper, singer, and songwriter credited with popularizing R&B sensibilities in hip-hop.",
+    "avatarUrl": "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=600&q=80",
+    "bannerUrl": "https://images.unsplash.com/photo-1514525253161-7a46d19cd819?auto=format&fit=crop&w=1600&q=80",
+    "headerColor": "#1E293B",
+    "genres": [
+      "Hip-Hop",
+      "Trap",
+      "R&B"
+    ],
+    "topTrackIds": [
+      "yt-34Na4j8AVgA"
+    ],
+    "albums": [],
+    "singles": [],
+    "relatedArtistIds": [
+      "the_weeknd"
+    ]
+  }
 ];
 
 /**
