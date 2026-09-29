@@ -421,6 +421,54 @@ export const LYRICS_DATABASE = {
       }
     ]
   }
+,
+  'chaleya': {
+    "key": "chaleya",
+    "title": "Chaleya",
+    "artist": "Arijit Singh & Shilpa Rao",
+    "lines": [
+      {
+        "time": 4,
+        "text": "♪ Upbeat Pop Synth Intro ♪"
+      },
+      {
+        "time": 12,
+        "text": "Ishq mein dil bana hai, ishq mein dil fanaa hai"
+      },
+      {
+        "time": 20,
+        "text": "Jitna bhi roko dil ko, utna hi yeh chala hai"
+      },
+      {
+        "time": 28,
+        "text": "Haye dauda dauda phire, yeh ishq deewana"
+      },
+      {
+        "time": 36,
+        "text": "Chaleya chaleya teri ore chaleya"
+      },
+      {
+        "time": 44,
+        "text": "Teri adaon ka yeh jaadu chaleya"
+      },
+      {
+        "time": 54,
+        "text": "♪ Infectious Dance Hook ♪"
+      },
+      {
+        "time": 66,
+        "text": "Dil yeh pukare bas tera hi naam"
+      },
+      {
+        "time": 78,
+        "text": "Tere bina ab to na aati koi shaam"
+      },
+      {
+        "time": 90,
+        "text": "Chaleya chaleya teri ore chaleya"
+      }
+    ]
+  }
 };
 
 /**
