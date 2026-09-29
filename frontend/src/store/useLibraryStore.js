@@ -1,5 +1,6 @@
 import { create } from 'zustand';
 import { MOCK_TRACKS, GENRES, FEATURED_MIXES } from '../data/mockTracks';
+import { getArtistProfile, getAlbumData } from '../data/artistsData';
 import {
   fetchPlaylistsApi,
   createPlaylistApi,
@@ -67,6 +68,24 @@ export const useLibraryStore = create((set, get) => ({
   // User Playlists
   customPlaylists: getInitialPlaylists(),
 
+  // Followed Artists & Saved Albums
+  followedArtistIds: (() => {
+    try {
+      const saved = localStorage.getItem('jennie_followed_artists');
+      return saved ? JSON.parse(saved) : [];
+    } catch {
+      return [];
+    }
+  })(),
+  savedAlbumIds: (() => {
+    try {
+      const saved = localStorage.getItem('jennie_saved_albums');
+      return saved ? JSON.parse(saved) : [];
+    } catch {
+      return [];
+    }
+  })(),
+
   // Sync with MongoDB backend on initial startup
   syncWithBackend: async () => {
     try {
@@ -113,6 +132,60 @@ export const useLibraryStore = create((set, get) => ({
 
   setSearchFilter: (filter) => {
     set({ searchFilter: filter });
+  },
+
+  // Open Artist Profile
+  openArtist: (artistOrName, additionalTracks = []) => {
+    const profile = (typeof artistOrName === 'object' && artistOrName?.topTracks)
+      ? artistOrName
+      : getArtistProfile(typeof artistOrName === 'object' ? (artistOrName?.name || artistOrName?.artist) : artistOrName, additionalTracks);
+    set({ activeView: 'artist', selectedItem: profile });
+    const mainEl = document.getElementById('main-content');
+    if (mainEl) mainEl.scrollTo({ top: 0, behavior: 'smooth' });
+  },
+
+  // Open Album Page
+  openAlbum: (albumOrTitle, artistName = '') => {
+    const album = (typeof albumOrTitle === 'object' && albumOrTitle?.tracks)
+      ? albumOrTitle
+      : getAlbumData(typeof albumOrTitle === 'object' ? albumOrTitle?.title : albumOrTitle, artistName);
+    set({ activeView: 'album', selectedItem: album });
+    const mainEl = document.getElementById('main-content');
+    if (mainEl) mainEl.scrollTo({ top: 0, behavior: 'smooth' });
+  },
+
+  // Follow / Unfollow Artist
+  toggleFollowArtist: (artistId) => {
+    const { followedArtistIds } = get();
+    const id = String(artistId);
+    const updated = followedArtistIds.includes(id)
+      ? followedArtistIds.filter((item) => item !== id)
+      : [...followedArtistIds, id];
+    set({ followedArtistIds: updated });
+    try {
+      localStorage.setItem('jennie_followed_artists', JSON.stringify(updated));
+    } catch {}
+  },
+
+  isFollowingArtist: (artistId) => {
+    return get().followedArtistIds.includes(String(artistId));
+  },
+
+  // Save / Unsave Album
+  toggleSaveAlbum: (albumId) => {
+    const { savedAlbumIds } = get();
+    const id = String(albumId);
+    const updated = savedAlbumIds.includes(id)
+      ? savedAlbumIds.filter((item) => item !== id)
+      : [...savedAlbumIds, id];
+    set({ savedAlbumIds: updated });
+    try {
+      localStorage.setItem('jennie_saved_albums', JSON.stringify(updated));
+    } catch {}
+  },
+
+  isAlbumSaved: (albumId) => {
+    return get().savedAlbumIds.includes(String(albumId));
   },
 
   // Liked tracks actions
