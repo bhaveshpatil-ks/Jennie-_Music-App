@@ -785,6 +785,50 @@ export const LYRICS_DATABASE = {
       }
     ]
   }
+,
+  'sidhu_295': {
+    "key": "sidhu_295",
+    "title": "295",
+    "artist": "Sidhu Moose Wala",
+    "lines": [
+      {
+        "time": 5,
+        "text": "♪ Iconic Organ Chords & Beat ♪"
+      },
+      {
+        "time": 14,
+        "text": "Dass kidaan bolan aidaan kidaan chupp ravaan"
+      },
+      {
+        "time": 22,
+        "text": "Sach bolan te 295 lagdi"
+      },
+      {
+        "time": 30,
+        "text": "Ajj kal sach kehna gunaah ban gaya"
+      },
+      {
+        "time": 38,
+        "text": "Jithe dekho othe nawa case ban gaya"
+      },
+      {
+        "time": 48,
+        "text": "♪ Moose Wala Vocal Crescendo ♪"
+      },
+      {
+        "time": 60,
+        "text": "Lokan di aukaat naap diti kalle ne"
+      },
+      {
+        "time": 72,
+        "text": "Sachiyan galan te lagde ne taale ve"
+      },
+      {
+        "time": 84,
+        "text": "Sidhu Moose Wala!"
+      }
+    ]
+  }
 };
 
 /**
