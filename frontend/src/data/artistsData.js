@@ -769,6 +769,40 @@ export const ARTISTS_DATA = [
       "diljit_dosanjh"
     ]
   }
+,
+
+  {
+    "id": "b_praak",
+    "name": "B Praak",
+    "aliases": [
+      "b praak",
+      "bpraak",
+      "praak",
+      "pratik bachchan"
+    ],
+    "verified": true,
+    "monthlyListeners": "19,200,000",
+    "followers": "14,000,000",
+    "bio": "B Praak is an Indian singer and music composer who rose to national fame with heart-wrenching emotional ballads like Teri Mitti, Filhall, and Mann Bharrya.",
+    "avatarUrl": "https://images.unsplash.com/photo-1522075469751-3a6694fb2f61?auto=format&fit=crop&w=600&q=80",
+    "bannerUrl": "https://images.unsplash.com/photo-1465847899084-d164df4dedc6?auto=format&fit=crop&w=1600&q=80",
+    "headerColor": "#9333EA",
+    "genres": [
+      "Punjabi Soul",
+      "Emotional Ballad",
+      "Soundtrack"
+    ],
+    "topTrackIds": [
+      "yt-RLzC55ai0eo"
+    ],
+    "albums": [],
+    "singles": [],
+    "relatedArtistIds": [
+      "arijit_singh",
+      "vishal_mishra",
+      "jubin_nautiyal"
+    ]
+  }
 ];
 
 /**
