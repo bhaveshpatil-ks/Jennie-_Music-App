@@ -561,6 +561,50 @@ export const LYRICS_DATABASE = {
       }
     ]
   }
+,
+  'white_brown_black': {
+    "key": "white_brown_black",
+    "title": "White Brown Black",
+    "artist": "Karan Aujla & Avvy Sra",
+    "lines": [
+      {
+        "time": 3,
+        "text": "♪ Trap Clap & Bass Intro ♪"
+      },
+      {
+        "time": 10,
+        "text": "White shirt, brown mundey, black car ni"
+      },
+      {
+        "time": 18,
+        "text": "Sadde naal baithe dekh saare yaar ni"
+      },
+      {
+        "time": 26,
+        "text": "Challe poori taur sadde naam da khumaar ni"
+      },
+      {
+        "time": 34,
+        "text": "White brown black jodi lagdi kamaal ni"
+      },
+      {
+        "time": 44,
+        "text": "♪ Bass Boosted Hook ♪"
+      },
+      {
+        "time": 56,
+        "text": "Vaddi vaddi gaddiyan ch ghumde ne yaar"
+      },
+      {
+        "time": 68,
+        "text": "Billboard utte aundi geetan di bahaar"
+      },
+      {
+        "time": 80,
+        "text": "White brown black..."
+      }
+    ]
+  }
 };
 
 /**
