@@ -221,6 +221,58 @@ export const LYRICS_DATABASE = {
       { time: 82, text: "Gham toh nahi hai, gham toh nahi hai" },
     ],
   },
+,
+  'pehle_bhi_main': {
+    "key": "pehle_bhi_main",
+    "title": "Pehle Bhi Main",
+    "artist": "Vishal Mishra",
+    "lines": [
+      {
+        "time": 5,
+        "text": "♪ Guitar Strumming Intro ♪"
+      },
+      {
+        "time": 14,
+        "text": "Pehle bhi main tumse mila hoon"
+      },
+      {
+        "time": 22,
+        "text": "Pehli dafa hi milke laga"
+      },
+      {
+        "time": 30,
+        "text": "Tune chhua zakhamon ko mere"
+      },
+      {
+        "time": 38,
+        "text": "Marham sa banke tu mil gaya"
+      },
+      {
+        "time": 48,
+        "text": "Pehle bhi main tumse mila hoon"
+      },
+      {
+        "time": 58,
+        "text": "♪ Soulful Guitar Solo ♪"
+      },
+      {
+        "time": 70,
+        "text": "Khwabon mein tere aane laga hoon"
+      },
+      {
+        "time": 82,
+        "text": "Khud ko tere sang paane laga hoon"
+      },
+      {
+        "time": 94,
+        "text": "Tu hi mera sach hai, tu hi junoon"
+      },
+      {
+        "time": 108,
+        "text": "Pehle bhi main tumse mila hoon"
+      }
+    ]
+  }
 };
 
 /**
