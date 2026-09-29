@@ -3,7 +3,7 @@
 > An elite, high-fidelity music streaming platform designed with a **minimal luxury** aesthetic for discerning listeners, creators, and audiophiles. Experience Spotify-style artist profiles, full discography exploration, interactive synchronized lyrics, smart typo-tolerant search, and studio master sound fidelity.
 
 [![Live Demo](https://img.shields.io/badge/Live%20Demo-jennie--ee.netlify.app-00C7B7?style=for-the-badge&logo=netlify&logoColor=white)](https://jennie-ee.netlify.app/)
-[![GitHub Repo](https://img.shields.io/badge/GitHub-Repository-181717?style=for-the-badge&logo=github&logoColor=white)](https://github.com/bhaveshpatil-ks/Jennie-_Music-App)
+[![GitHub Repo](https://img.shields.io/badge/GitHub-Repository-181717?style=for-the-badge&logo=github&logoColor=white)](https://github.com/bhaveshpatil-ks/Jennie-_Music-Website)
 [![Vite](https://img.shields.io/badge/Vite-6.x-646CFF?style=flat-square&logo=vite&logoColor=white)](https://vitejs.dev/)
 [![React](https://img.shields.io/badge/React-19.x-61DAFB?style=flat-square&logo=react&logoColor=black)](https://react.dev/)
 [![TailwindCSS](https://img.shields.io/badge/TailwindCSS-3.x-38B2AC?style=flat-square&logo=tailwind-css&logoColor=white)](https://tailwindcss.com/)
