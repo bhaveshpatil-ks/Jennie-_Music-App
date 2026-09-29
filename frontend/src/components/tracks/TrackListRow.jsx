@@ -1,8 +1,9 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Play, Pause, MoreHorizontal, Plus, Check, ShieldCheck } from 'lucide-react';
+import { Play, Pause, MoreHorizontal, Plus, Check, ListMusic, ListPlus, SkipForward } from 'lucide-react';
 import { usePlayerStore } from '../../store/usePlayerStore';
 import { useLibraryStore } from '../../store/useLibraryStore';
 import { LikeButton } from '../common/LikeButton';
+import { AddToPlaylistModal } from '../common/AddToPlaylistModal';
 import { formatDuration, getTrackCoverUrl } from '../../data/mockTracks';
 
 export const TrackListRow = ({ track, index, queue = null, onPlay = null }) => {
@@ -10,12 +11,11 @@ export const TrackListRow = ({ track, index, queue = null, onPlay = null }) => {
   const isPlaying = usePlayerStore((state) => state.isPlaying);
   const playTrack = usePlayerStore((state) => state.playTrack);
   const togglePlay = usePlayerStore((state) => state.togglePlay);
-
-  const customPlaylists = useLibraryStore((state) => state.customPlaylists);
-  const addTrackToPlaylist = useLibraryStore((state) => state.addTrackToPlaylist);
+  const addToQueue = usePlayerStore((state) => state.addToQueue);
+  const playNext = usePlayerStore((state) => state.playNext);
 
   const [menuOpen, setMenuOpen] = useState(false);
-  const [showToast, setShowToast] = useState(false);
+  const [isPlaylistModalOpen, setIsPlaylistModalOpen] = useState(false);
   const menuRef = useRef(null);
 
   const isCurrent = currentTrack?.id === track.id;
@@ -175,31 +175,60 @@ export const TrackListRow = ({ track, index, queue = null, onPlay = null }) => {
             <div
               onClick={(e) => e.stopPropagation()}
               role="menu"
-              aria-label="Playlist Options"
-              className="absolute right-0 top-7 w-44 py-1.5 glass-dropdown rounded-xl z-50 text-xs shadow-2xl animate-luxury-fade border border-white/10 bg-[#141414]/95 backdrop-blur-2xl"
+              aria-label="Track Options"
+              className="absolute right-0 top-7 w-48 py-1.5 glass-dropdown rounded-2xl z-50 text-xs shadow-2xl animate-luxury-fade border border-white/10 bg-[#141416]/95 backdrop-blur-2xl"
             >
-              <div className="px-3 py-1 text-[10px] uppercase font-bold text-neutral-400 border-b border-white/5">
-                Add to Playlist
-              </div>
-              {customPlaylists.length === 0 ? (
-                <div className="px-3 py-2 text-neutral-400 italic text-[11px]">No playlists created yet</div>
-              ) : (
-                customPlaylists.map((pl) => (
-                  <button
-                    key={pl.id}
-                    role="menuitem"
-                    onClick={() => handleAddToPlaylist(pl.id)}
-                    className="w-full text-left px-3 py-1.5 hover:bg-white/10 text-white flex items-center justify-between focus-visible:bg-white/10 focus-visible:outline-none"
-                  >
-                    <span className="truncate">{pl.title}</span>
-                    <Plus size={12} className="text-neutral-400" />
-                  </button>
-                ))
-              )}
+              <button
+                type="button"
+                role="menuitem"
+                onClick={() => {
+                  playNext(track);
+                  setMenuOpen(false);
+                }}
+                className="w-full text-left px-3.5 py-2 hover:bg-white/10 text-white flex items-center gap-2.5 transition-colors cursor-pointer"
+              >
+                <SkipForward size={14} className="text-neutral-400" />
+                <span>Play Next</span>
+              </button>
+
+              <button
+                type="button"
+                role="menuitem"
+                onClick={() => {
+                  addToQueue(track);
+                  setMenuOpen(false);
+                }}
+                className="w-full text-left px-3.5 py-2 hover:bg-white/10 text-white flex items-center gap-2.5 transition-colors cursor-pointer"
+              >
+                <ListMusic size={14} className="text-neutral-400" />
+                <span>Add to Queue</span>
+              </button>
+
+              <div className="my-1 border-t border-white/5" />
+
+              <button
+                type="button"
+                role="menuitem"
+                onClick={() => {
+                  setIsPlaylistModalOpen(true);
+                  setMenuOpen(false);
+                }}
+                className="w-full text-left px-3.5 py-2 hover:bg-white/10 text-white flex items-center gap-2.5 transition-colors cursor-pointer"
+              >
+                <ListPlus size={14} className="text-neutral-400" />
+                <span>Add to Playlist...</span>
+              </button>
             </div>
           )}
         </div>
       </div>
+
+      {/* Add To Playlist Modal */}
+      <AddToPlaylistModal
+        isOpen={isPlaylistModalOpen}
+        onClose={() => setIsPlaylistModalOpen(false)}
+        track={track}
+      />
     </div>
   );
 };
