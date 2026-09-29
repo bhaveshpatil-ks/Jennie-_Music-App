@@ -1,8 +1,8 @@
-import React from 'react';
-import { Play, Pause } from 'lucide-react';
+import React, { useState } from 'react';
+import { Play, Pause, ListPlus, ListMusic } from 'lucide-react';
 import { usePlayerStore } from '../../store/usePlayerStore';
 import { LikeButton } from '../common/LikeButton';
-
+import { AddToPlaylistModal } from '../common/AddToPlaylistModal';
 import { getTrackCoverUrl } from '../../data/mockTracks';
 
 export const TrackCard = ({ track, queue = null, showGenre = true }) => {
@@ -10,6 +10,9 @@ export const TrackCard = ({ track, queue = null, showGenre = true }) => {
   const isPlaying = usePlayerStore((state) => state.isPlaying);
   const playTrack = usePlayerStore((state) => state.playTrack);
   const togglePlay = usePlayerStore((state) => state.togglePlay);
+  const addToQueue = usePlayerStore((state) => state.addToQueue);
+
+  const [isPlaylistModalOpen, setIsPlaylistModalOpen] = useState(false);
 
   const isCurrent = currentTrack?.id === track.id;
   const isCurrentPlaying = isCurrent && isPlaying;
@@ -24,8 +27,9 @@ export const TrackCard = ({ track, queue = null, showGenre = true }) => {
   };
 
   return (
-    <div
-      onClick={handlePlayClick}
+    <>
+      <div
+        onClick={handlePlayClick}
       role="button"
       tabIndex={0}
       onKeyDown={(e) => {
@@ -47,6 +51,32 @@ export const TrackCard = ({ track, queue = null, showGenre = true }) => {
           className="w-full h-full object-cover group-hover:scale-[1.03] transition-transform duration-700 ease-[cubic-bezier(0.16,1,0.3,1)]"
           loading="lazy"
         />
+
+        {/* Floating Actions on Top */}
+        <div className="absolute top-2 left-2 z-10 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center gap-1.5">
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              addToQueue(track);
+            }}
+            aria-label={`Add ${track.title} to queue`}
+            title="Add to Queue"
+            className="w-7 h-7 rounded-full bg-black/70 hover:bg-white hover:text-black text-neutral-200 backdrop-blur-md flex items-center justify-center transition-all duration-200 shadow-md"
+          >
+            <ListMusic size={13} />
+          </button>
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              setIsPlaylistModalOpen(true);
+            }}
+            aria-label={`Add ${track.title} to playlist`}
+            title="Add to Playlist"
+            className="w-7 h-7 rounded-full bg-black/70 hover:bg-white hover:text-black text-neutral-200 backdrop-blur-md flex items-center justify-center transition-all duration-200 shadow-md"
+          >
+            <ListPlus size={13} />
+          </button>
+        </div>
 
         {/* Floating Like Button */}
         <div className="absolute top-2 right-2 z-10 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
@@ -110,5 +140,11 @@ export const TrackCard = ({ track, queue = null, showGenre = true }) => {
         )}
       </div>
     </div>
+    <AddToPlaylistModal
+      isOpen={isPlaylistModalOpen}
+      onClose={() => setIsPlaylistModalOpen(false)}
+      track={track}
+    />
+  </>
   );
 };
