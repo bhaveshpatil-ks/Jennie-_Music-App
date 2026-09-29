@@ -72,17 +72,18 @@ const stopSilentCarrier = () => {
 const syncMediaSession = (track, isPlaying) => {
   if (typeof window === 'undefined' || !('mediaSession' in navigator) || !track) return;
   try {
+    const cover = getTrackCoverUrl(track);
     navigator.mediaSession.metadata = new MediaMetadata({
       title: track.title || 'Unknown Track',
       artist: track.artist || 'Jennie Music',
       album: track.album || 'Jennie Music',
-      artwork: track.artwork
+      artwork: cover
         ? [
-            { src: track.artwork, sizes: '96x96', type: 'image/jpeg' },
-            { src: track.artwork, sizes: '128x128', type: 'image/jpeg' },
-            { src: track.artwork, sizes: '192x192', type: 'image/jpeg' },
-            { src: track.artwork, sizes: '256x256', type: 'image/jpeg' },
-            { src: track.artwork, sizes: '512x512', type: 'image/jpeg' },
+            { src: cover, sizes: '96x96', type: 'image/jpeg' },
+            { src: cover, sizes: '128x128', type: 'image/jpeg' },
+            { src: cover, sizes: '192x192', type: 'image/jpeg' },
+            { src: cover, sizes: '256x256', type: 'image/jpeg' },
+            { src: cover, sizes: '512x512', type: 'image/jpeg' },
           ]
         : [],
     });
@@ -215,9 +216,23 @@ export const usePlayerStore = create((set, get) => {
     vocalClarity: true, // Studio Vocal Clarity & Loudness Enhancement
     toggleVocalClarity: () => set((state) => ({ vocalClarity: !state.vocalClarity })),
 
+    // Toast Notification Feedback
+    toastMessage: null,
+    showToast: (message) => {
+      set({ toastMessage: message });
+      setTimeout(() => {
+        if (get().toastMessage === message) {
+          set({ toastMessage: null });
+        }
+      }, 2500);
+    },
+
     // UI Modals / Drawers & Filter Tabs
     isFullscreenOpen: false,
     isQueueOpen: false,
+    isLyricsOpen: false,
+    toggleLyrics: () => set((state) => ({ isLyricsOpen: !state.isLyricsOpen })),
+    setLyricsOpen: (isOpen) => set({ isLyricsOpen: isOpen }),
     queueFilterTab: 'all', // 'all' | 'search' | 'artist' | 'genre'
     setQueueFilterTab: (tab) => set({ queueFilterTab: tab }),
 
@@ -628,6 +643,49 @@ export const usePlayerStore = create((set, get) => {
 
     setQueueOpen: (isOpen) => {
       set({ isQueueOpen: isOpen });
+    },
+
+    addToQueue: (track) => {
+      if (!track) return;
+      const { queue } = get();
+      const exists = queue.some((t) => t.id === track.id);
+      if (exists) {
+        get().showToast(`"${track.title}" is already in queue`);
+        return;
+      }
+      set({ queue: [...queue, track] });
+      get().showToast(`Added "${track.title}" to queue`);
+    },
+
+    playNext: (track) => {
+      if (!track) return;
+      const { queue, currentIndex } = get();
+      const filtered = queue.filter((t) => t.id !== track.id);
+      const insertAt = Math.max(0, currentIndex + 1);
+      filtered.splice(insertAt, 0, track);
+      set({ queue: filtered });
+      get().showToast(`Playing "${track.title}" next`);
+    },
+
+    removeFromQueue: (trackId) => {
+      const { queue, currentIndex, currentTrack } = get();
+      if (currentTrack?.id === trackId) {
+        get().nextTrack();
+        return;
+      }
+      const updated = queue.filter((t) => t.id !== trackId);
+      const newIdx = updated.findIndex((t) => t.id === currentTrack?.id);
+      set({
+        queue: updated,
+        currentIndex: newIdx >= 0 ? newIdx : currentIndex,
+      });
+      get().showToast(`Removed from queue`);
+    },
+
+    clearQueue: () => {
+      const { currentTrack } = get();
+      set({ queue: currentTrack ? [currentTrack] : [], currentIndex: 0 });
+      get().showToast(`Queue cleared`);
     },
   };
 });
