@@ -1313,6 +1313,36 @@ export const ARTISTS_DATA = [
       "the_weeknd"
     ]
   }
+,
+
+  {
+    "id": "billie_eilish",
+    "name": "Billie Eilish",
+    "aliases": [
+      "billie eilish",
+      "billie"
+    ],
+    "verified": true,
+    "monthlyListeners": "106,000,000",
+    "followers": "92,000,000",
+    "bio": "Billie Eilish Pirate Baird O’Connell is an American singer-songwriter who first gained public attention with her debut single Ocean Eyes and has won nine Grammy Awards and two Oscars.",
+    "avatarUrl": "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=600&q=80",
+    "bannerUrl": "https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?auto=format&fit=crop&w=1600&q=80",
+    "headerColor": "#059669",
+    "genres": [
+      "Alternative Pop",
+      "Electropop",
+      "Dark Pop"
+    ],
+    "topTrackIds": [
+      "yt-cWMxCE2HTag"
+    ],
+    "albums": [],
+    "singles": [],
+    "relatedArtistIds": [
+      "the_weeknd"
+    ]
+  }
 ];
 
 /**
