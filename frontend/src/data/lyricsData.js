@@ -221,7 +221,6 @@ export const LYRICS_DATABASE = {
       { time: 82, text: "Gham toh nahi hai, gham toh nahi hai" },
     ],
   },
-,
   'pehle_bhi_main': {
     "key": "pehle_bhi_main",
     "title": "Pehle Bhi Main",
