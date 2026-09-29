@@ -1055,6 +1055,39 @@ export const ARTISTS_DATA = [
       "sidhu_moose_wala"
     ]
   }
+,
+
+  {
+    "id": "emiway_bantai",
+    "name": "Emiway Bantai",
+    "aliases": [
+      "emiway",
+      "emiway bantai",
+      "bantai",
+      "bilal shaikh"
+    ],
+    "verified": true,
+    "monthlyListeners": "6,200,000",
+    "followers": "8,900,000",
+    "bio": "Emiway Bantai is an independent Indian rapper, songwriter, and founder of Bantai Records, known for explosive flow and record-breaking viral numbers.",
+    "avatarUrl": "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=600&q=80",
+    "bannerUrl": "https://images.unsplash.com/photo-1492684223066-81342ee5ff30?auto=format&fit=crop&w=1600&q=80",
+    "headerColor": "#F59E0B",
+    "genres": [
+      "Desi Hip-Hop",
+      "Drill",
+      "Independent Rap"
+    ],
+    "topTrackIds": [
+      "yt-4DfVxVeqk2o"
+    ],
+    "albums": [],
+    "singles": [],
+    "relatedArtistIds": [
+      "divine",
+      "mc_stan"
+    ]
+  }
 ];
 
 /**
