@@ -803,6 +803,37 @@ export const ARTISTS_DATA = [
       "jubin_nautiyal"
     ]
   }
+,
+
+  {
+    "id": "jasleen_royal",
+    "name": "Jasleen Royal",
+    "aliases": [
+      "jasleen royal",
+      "jasleen"
+    ],
+    "verified": true,
+    "monthlyListeners": "14,500,000",
+    "followers": "8,200,000",
+    "bio": "Jasleen Kaur Royal is an Indian singer, songwriter, and composer who sings in Punjabi, Hindi, and English. Known for chartbusters like Heeriye, Din Shagna Da, and Ranjha.",
+    "avatarUrl": "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=600&q=80",
+    "bannerUrl": "https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?auto=format&fit=crop&w=1600&q=80",
+    "headerColor": "#EC4899",
+    "genres": [
+      "Indie Folk",
+      "Acoustic Pop",
+      "Bollywood"
+    ],
+    "topTrackIds": [
+      "yt-AFTIVN8rRbI"
+    ],
+    "albums": [],
+    "singles": [],
+    "relatedArtistIds": [
+      "arijit_singh",
+      "pritam"
+    ]
+  }
 ];
 
 /**
