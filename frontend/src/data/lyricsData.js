@@ -697,6 +697,50 @@ export const LYRICS_DATABASE = {
       }
     ]
   }
+,
+  'excuses': {
+    "key": "excuses",
+    "title": "Excuses",
+    "artist": "AP Dhillon & Gurinder Gill",
+    "lines": [
+      {
+        "time": 6,
+        "text": "♪ Signature Acoustic Guitar Loop ♪"
+      },
+      {
+        "time": 16,
+        "text": "Kehndi hundi si chan tak raah bana de"
+      },
+      {
+        "time": 24,
+        "text": "Taare ne pasand mainu hethaan saare laa de"
+      },
+      {
+        "time": 32,
+        "text": "Ohna taareyan de vich jadon mainu vekhegi"
+      },
+      {
+        "time": 40,
+        "text": "Yaad taan meri aaugi, par na bol sakegi"
+      },
+      {
+        "time": 50,
+        "text": "♪ Trap Drums & 808 Drop ♪"
+      },
+      {
+        "time": 62,
+        "text": "Tere jhoothe te fareb saare jande ne sab"
+      },
+      {
+        "time": 74,
+        "text": "Wafa di ummeed aapa kiti si ghalat"
+      },
+      {
+        "time": 86,
+        "text": "Kehndi hundi si chan tak raah bana de..."
+      }
+    ]
+  }
 };
 
 /**
