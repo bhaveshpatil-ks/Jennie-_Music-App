@@ -9,7 +9,10 @@ dist/
 **/dist/
 build/
 **/build/
+release/
+**/release/
 .output/
+**/.gradle/
 
 # Environment Variables & Secrets
 .env

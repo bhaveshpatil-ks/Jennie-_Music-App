@@ -269,7 +269,7 @@ export const YouTubePlayerEmbed = () => {
       className={`transition-all duration-300 ${
         isVideoMode && isYouTubeTrack
           ? 'fixed bottom-24 right-4 md:right-8 w-72 sm:w-80 md:w-96 aspect-video bg-black/95 rounded-2xl shadow-2xl border border-white/10 overflow-hidden backdrop-blur-md z-50 pointer-events-auto opacity-100'
-          : 'fixed bottom-0 right-0 w-[200px] h-[112px] opacity-[0.01] pointer-events-none z-[-1] overflow-hidden'
+          : 'fixed -bottom-[9999px] -right-[9999px] w-[200px] h-[112px] opacity-0 pointer-events-none z-[-1] overflow-hidden'
       }`}
       aria-hidden={!isVideoMode}
     >
