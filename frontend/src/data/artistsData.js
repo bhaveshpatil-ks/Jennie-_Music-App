@@ -945,6 +945,37 @@ export const ARTISTS_DATA = [
       "sonu_nigam"
     ]
   }
+,
+
+  {
+    "id": "kumar_sanu",
+    "name": "Kumar Sanu",
+    "aliases": [
+      "kumar sanu",
+      "sanu da",
+      "kedarnath bhattacharya"
+    ],
+    "verified": true,
+    "monthlyListeners": "18,500,000",
+    "followers": "17,000,000",
+    "bio": "Kumar Sanu is a legendary Indian playback singer who holds the Guinness World Record for recording 28 songs in a single day and defined the sound of 90s Bollywood romance.",
+    "avatarUrl": "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&w=600&q=80",
+    "bannerUrl": "https://images.unsplash.com/photo-1470225620780-dba8ba36b745?auto=format&fit=crop&w=1600&q=80",
+    "headerColor": "#D97706",
+    "genres": [
+      "90s Bollywood",
+      "Romantic Melody"
+    ],
+    "topTrackIds": [
+      "yt-Bi7sSC046dk"
+    ],
+    "albums": [],
+    "singles": [],
+    "relatedArtistIds": [
+      "alka_yagnik",
+      "sonu_nigam"
+    ]
+  }
 ];
 
 /**
