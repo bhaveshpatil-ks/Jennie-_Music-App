@@ -16,7 +16,7 @@ import { TrackTable } from '../components/tracks';
 import { useLibraryStore } from '../store/useLibraryStore';
 import { usePlayerStore } from '../store/usePlayerStore';
 import { searchTracks } from '../services/api';
-import { searchArtistsAndAlbums, getArtistProfile, getAlbumData } from '../data/artistsData';
+import { searchArtistsAndAlbums, getArtistProfile, getAlbumData, checkArtistQueryMatch } from '../data/artistsData';
 import { getTrackCoverUrl } from '../data/mockTracks';
 
 export const Search = () => {
@@ -78,11 +78,35 @@ export const Search = () => {
 
   const query = searchQuery.trim().toLowerCase();
 
-  // Curated Artists & Albums match
+  // Curated Artists & Albums match with liveTracks fallback
   const { artists: matchingArtists, albums: matchingAlbums } = useMemo(() => {
     if (!query) return { artists: [], albums: [] };
-    return searchArtistsAndAlbums(query);
-  }, [query]);
+    const res = searchArtistsAndAlbums(query, liveTracks);
+
+    // If still no artists matched, scan liveTracks from YouTube to find artists
+    if (res.artists.length === 0 && Array.isArray(liveTracks) && liveTracks.length > 0) {
+      const extracted = [];
+      liveTracks.forEach((t) => {
+        if (!t || !t.artist) return;
+        const rawArtist = t.artist.trim();
+        const lower = rawArtist.toLowerCase();
+        const isLabel = [
+          't-series', 'tseries', 'sony music', 'zee music', 
+          'speed records', 'yrf', 'tips official', 'eros now', 'saregama'
+        ].some((lbl) => lower.includes(lbl));
+        if (isLabel) return;
+
+        if (!extracted.some((a) => a.name.toLowerCase() === rawArtist.toLowerCase())) {
+          extracted.push(getArtistProfile(rawArtist, liveTracks));
+        }
+      });
+      if (extracted.length > 0) {
+        res.artists = extracted;
+      }
+    }
+
+    return res;
+  }, [query, liveTracks]);
 
   // Live Track Search from Backend API / YouTube
   useEffect(() => {
@@ -117,8 +141,10 @@ export const Search = () => {
   // Otherwise, it is the top song track.
   const isArtistQuery = matchingArtists.length > 0 && (
     searchFilter === 'artists' ||
+    checkArtistQueryMatch(query, matchingArtists[0]) ||
     matchingArtists[0].name.toLowerCase().includes(query) ||
-    query.includes(matchingArtists[0].name.toLowerCase().slice(0, 4))
+    query.includes(matchingArtists[0].name.toLowerCase().slice(0, 4)) ||
+    liveTracks.slice(0, 4).some((t) => t.artist && checkArtistQueryMatch(t.artist, matchingArtists[0]))
   );
 
   const isAlbumQuery = !isArtistQuery && matchingAlbums.length > 0 && (
@@ -306,7 +332,7 @@ export const Search = () => {
                             e.stopPropagation();
                             handleArtistPlay(artist);
                           }}
-                          className="absolute right-2 bottom-2 w-10 h-10 rounded-full bg-white text-black flex items-center justify-center shadow-2xl opacity-0 group-hover:opacity-100 transition-all hover:scale-105 active:scale-95"
+                          className="absolute right-2 bottom-2 w-10 h-10 rounded-full bg-white text-black flex items-center justify-center shadow-2xl opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-all hover:scale-105 active:scale-95"
                           title={`Play ${artist.name}`}
                         >
                           <Play size={18} className="fill-black ml-0.5" />
@@ -471,7 +497,7 @@ export const Search = () => {
                           e.stopPropagation();
                           handleArtistPlay(topArtist);
                         }}
-                        className="absolute right-5 bottom-5 w-12 h-12 rounded-full bg-white text-black flex items-center justify-center shadow-2xl transition-all duration-300 hover:scale-105 active:scale-95 opacity-0 translate-y-2 group-hover:opacity-100 group-hover:translate-y-0"
+                        className="absolute right-5 bottom-5 w-12 h-12 rounded-full bg-white text-black flex items-center justify-center shadow-2xl transition-all duration-300 hover:scale-105 active:scale-95 opacity-100 sm:opacity-0 sm:translate-y-2 sm:group-hover:opacity-100 sm:group-hover:translate-y-0"
                         title={`Play ${topArtist.name}`}
                       >
                         <Play size={20} className="fill-black ml-0.5" />
