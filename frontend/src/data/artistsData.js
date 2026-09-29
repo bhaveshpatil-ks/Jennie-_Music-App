@@ -1218,6 +1218,37 @@ export const ARTISTS_DATA = [
       "the_weeknd"
     ]
   }
+,
+
+  {
+    "id": "justin_bieber",
+    "name": "Justin Bieber",
+    "aliases": [
+      "justin bieber",
+      "justin",
+      "bieber"
+    ],
+    "verified": true,
+    "monthlyListeners": "89,500,000",
+    "followers": "78,000,000",
+    "bio": "Justin Drew Bieber is a Canadian singer recognized for multi-genre musicianship and global chart dominance across pop, R&B, and electronic music.",
+    "avatarUrl": "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&w=600&q=80",
+    "bannerUrl": "https://images.unsplash.com/photo-1492684223066-81342ee5ff30?auto=format&fit=crop&w=1600&q=80",
+    "headerColor": "#2563EB",
+    "genres": [
+      "Pop",
+      "R&B",
+      "Dance Pop"
+    ],
+    "topTrackIds": [
+      "yt-4NRXx6U8ABQ"
+    ],
+    "albums": [],
+    "singles": [],
+    "relatedArtistIds": [
+      "the_weeknd"
+    ]
+  }
 ];
 
 /**
