@@ -572,6 +572,55 @@ export const ARTISTS_DATA = [
     singles: [],
     relatedArtistIds: ['arijit_singh', 'pritam', 'jubin_nautiyal']
   }
+,
+
+  {
+    "id": "ar_rahman",
+    "name": "A.R. Rahman",
+    "aliases": [
+      "ar rahman",
+      "rahman",
+      "a.r. rahman",
+      "allah rakha rahman",
+      "isai puyal"
+    ],
+    "verified": true,
+    "monthlyListeners": "34,200,000",
+    "followers": "28,500,000",
+    "bio": "Allah Rakha Rahman is an Indian music director, composer, and music producer known for integrating Indian classical music with electronic music, world music, and traditional orchestral arrangements. Recipient of 2 Academy Awards, 2 Grammy Awards, and a BAFTA.",
+    "avatarUrl": "https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?auto=format&fit=crop&w=600&q=80",
+    "bannerUrl": "https://images.unsplash.com/photo-1470225620780-dba8ba36b745?auto=format&fit=crop&w=1600&q=80",
+    "headerColor": "#047857",
+    "genres": [
+      "World Music",
+      "Soundtrack",
+      "Sufi",
+      "Classical Fusion"
+    ],
+    "topTrackIds": [
+      "yt-BddP6PYo2gs",
+      "yt-RLzC55ai0eo"
+    ],
+    "albums": [
+      {
+        "id": "album-rockstar",
+        "title": "Rockstar (Original Motion Picture Soundtrack)",
+        "type": "Album",
+        "releaseYear": 2011,
+        "coverUrl": "https://i.ytimg.com/vi/BddP6PYo2gs/hqdefault.jpg",
+        "trackIds": [
+          "yt-BddP6PYo2gs"
+        ],
+        "totalTracks": 14,
+        "genre": "Sufi Rock"
+      }
+    ],
+    "singles": [],
+    "relatedArtistIds": [
+      "pritam",
+      "arijit_singh"
+    ]
+  }
 ];
 
 /**
