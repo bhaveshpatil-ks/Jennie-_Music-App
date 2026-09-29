@@ -869,6 +869,46 @@ export const LYRICS_DATABASE = {
       }
     ]
   }
+,
+  'genda_phool': {
+    "key": "genda_phool",
+    "title": "Genda Phool",
+    "artist": "Badshah & Payal Dev",
+    "lines": [
+      {
+        "time": 4,
+        "text": "♪ Folk Hook & EDM Synths ♪"
+      },
+      {
+        "time": 12,
+        "text": "Boroloker biti lo lombe lombe chul"
+      },
+      {
+        "time": 20,
+        "text": "Emon mathaye bendhe debo laal genda phool"
+      },
+      {
+        "time": 28,
+        "text": "Badshah!"
+      },
+      {
+        "time": 36,
+        "text": "Chale jab tu latak matak, laundo ke dil patak patak"
+      },
+      {
+        "time": 44,
+        "text": "Saans jaye atak atak, ata maajhi satak satak"
+      },
+      {
+        "time": 54,
+        "text": "♪ Commercial Dance Drop ♪"
+      },
+      {
+        "time": 66,
+        "text": "Laal genda phool, laal genda phool!"
+      }
+    ]
+  }
 };
 
 /**
