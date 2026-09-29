@@ -1120,6 +1120,39 @@ export const ARTISTS_DATA = [
       "emiway_bantai"
     ]
   }
+,
+
+  {
+    "id": "king",
+    "name": "King",
+    "aliases": [
+      "king",
+      "king rocco",
+      "arpan kumar chandel",
+      "maan meri jaan"
+    ],
+    "verified": true,
+    "monthlyListeners": "14,100,000",
+    "followers": "9,800,000",
+    "bio": "Arpan Kumar Chandel, known by his stage name King, is an Indian rapper, singer, and songwriter known for global cross-over hits like Maan Meri Jaan.",
+    "avatarUrl": "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=600&q=80",
+    "bannerUrl": "https://images.unsplash.com/photo-1501386761578-eac5c94b800a?auto=format&fit=crop&w=1600&q=80",
+    "headerColor": "#10B981",
+    "genres": [
+      "Pop Rap",
+      "Desi Pop",
+      "R&B"
+    ],
+    "topTrackIds": [
+      "yt-AFTIVN8rRbI"
+    ],
+    "albums": [],
+    "singles": [],
+    "relatedArtistIds": [
+      "karan_aujla",
+      "badshah"
+    ]
+  }
 ];
 
 /**
