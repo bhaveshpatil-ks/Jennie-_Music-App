@@ -4,8 +4,9 @@ import { MOCK_TRACKS, getTrackCoverUrl } from './mockTracks';
  * Curated database of top Indian & international artists, albums, and discographies.
  * Follows Spotify's metadata structure:
  * - Verified status, monthly listeners, bio, banner & avatar imagery
+ * - Aliases for typo-tolerant fuzzy matching (e.g. "arjit singh" -> "Arijit Singh")
  * - Discography categorized into Albums, Singles, and EPs
- * - Top 10 Popular tracks
+ * - Top Popular tracks
  * - Related Artists ("Fans Also Like")
  */
 
@@ -13,6 +14,10 @@ export const ARTISTS_DATA = [
   {
     id: 'arijit_singh',
     name: 'Arijit Singh',
+    aliases: [
+      'arjit singh', 'arjit', 'arijit', 'arijeet', 'arijit singh', 
+      'arijitsingh', 'arjeet', 'arjeet singh', 'arijitsing'
+    ],
     verified: true,
     monthlyListeners: '38,920,410',
     followers: '42,100,000',
@@ -103,6 +108,10 @@ export const ARTISTS_DATA = [
   {
     id: 'karan_aujla',
     name: 'Karan Aujla',
+    aliases: [
+      'karan aujla', 'karan', 'aujla', 'karanaujla', 
+      'geetan di machine', 'jaskaran singh aujla'
+    ],
     verified: true,
     monthlyListeners: '14,350,190',
     followers: '8,420,000',
@@ -180,6 +189,10 @@ export const ARTISTS_DATA = [
   {
     id: 'diljit_dosanjh',
     name: 'Diljit Dosanjh',
+    aliases: [
+      'diljit dosanjh', 'diljit', 'diljeet', 'diljeet dosanjh', 
+      'dosanjh', 'diljitdosanjh', 'diljit doshanjh'
+    ],
     verified: true,
     monthlyListeners: '18,890,320',
     followers: '15,600,000',
@@ -244,6 +257,10 @@ export const ARTISTS_DATA = [
   {
     id: 'ap_dhillon',
     name: 'AP Dhillon',
+    aliases: [
+      'ap dhillon', 'ap', 'dhillon', 'apdhillon', 
+      'amritpal', 'amritpal singh dhillon'
+    ],
     verified: true,
     monthlyListeners: '9,740,210',
     followers: '6,200,000',
@@ -295,8 +312,44 @@ export const ARTISTS_DATA = [
   },
 
   {
+    id: 'sidhu_moose_wala',
+    name: 'Sidhu Moose Wala',
+    aliases: [
+      'sidhu', 'moosewala', 'moose wala', 'sidhu moosewala', 
+      'sidhu moose wala', 'shubhdeep singh sidhu', '295'
+    ],
+    verified: true,
+    monthlyListeners: '12,890,000',
+    followers: '16,400,000',
+    bio: 'Shubhdeep Singh Sidhu, known globally as Sidhu Moose Wala, was an iconic Punjabi singer, rapper, and songwriter whose bold lyricism and powerful anthems conquered charts worldwide.',
+    avatarUrl: 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&w=600&q=80',
+    bannerUrl: 'https://images.unsplash.com/photo-1514525253161-7a46d19cd819?auto=format&fit=crop&w=1600&q=80',
+    headerColor: '#B91C1C',
+    genres: ['Punjabi Rap', 'Desi Hip-Hop', 'Folk Rap', 'Gangsta Rap'],
+    topTrackIds: ['yt-LK7-_dgAVQE', 'yt-4DfVxVeqk2o'],
+    albums: [
+      {
+        id: 'album-moosetape',
+        title: 'Moosetape',
+        type: 'Album',
+        releaseYear: 2021,
+        coverUrl: 'https://i.ytimg.com/vi/LK7-_dgAVQE/hqdefault.jpg',
+        trackIds: ['yt-LK7-_dgAVQE'],
+        totalTracks: 32,
+        genre: 'Punjabi Hip-Hop'
+      }
+    ],
+    singles: [],
+    relatedArtistIds: ['karan_aujla', 'diljit_dosanjh', 'shubh']
+  },
+
+  {
     id: 'the_weeknd',
     name: 'The Weeknd',
+    aliases: [
+      'weeknd', 'the weeknd', 'the weekend', 'weekend', 
+      'abel', 'abel tesfaye', 'starboy'
+    ],
     verified: true,
     monthlyListeners: '114,820,950',
     followers: '88,000,000',
@@ -333,24 +386,14 @@ export const ARTISTS_DATA = [
         genre: 'Synthwave'
       }
     ],
-    singles: [
-      {
-        id: 'single-blinding-lights',
-        title: 'Blinding Lights',
-        type: 'Single',
-        releaseYear: 2019,
-        coverUrl: 'https://i.ytimg.com/vi/4NRXx6U8ABQ/hqdefault.jpg',
-        trackIds: ['yt-4NRXx6U8ABQ'],
-        totalTracks: 1,
-        genre: 'Synthwave'
-      }
-    ],
+    singles: [],
     relatedArtistIds: ['ap_dhillon', 'karan_aujla', 'arijit_singh']
   },
 
   {
     id: 'vishal_mishra',
     name: 'Vishal Mishra',
+    aliases: ['vishal mishra', 'vishal', 'vishalmishra', 'vishal mishara'],
     verified: true,
     monthlyListeners: '16,210,000',
     followers: '5,800,000',
@@ -394,6 +437,7 @@ export const ARTISTS_DATA = [
   {
     id: 'shubh',
     name: 'Shubh',
+    aliases: ['shubh', 'shubneet', 'shubneet singh', 'still rollin', 'shubh music'],
     verified: true,
     monthlyListeners: '8,420,000',
     followers: '4,100,000',
@@ -417,16 +461,6 @@ export const ARTISTS_DATA = [
         trackIds: ['yt-4DfVxVeqk2o'],
         totalTracks: 7,
         genre: 'Punjabi Hip-Hop'
-      },
-      {
-        id: 'album-leo',
-        title: 'Leo',
-        type: 'Album',
-        releaseYear: 2024,
-        coverUrl: 'https://i.ytimg.com/vi/pXRviuL6vMY/hqdefault.jpg',
-        trackIds: ['yt-pXRviuL6vMY'],
-        totalTracks: 8,
-        genre: 'Desi Rap'
       }
     ],
     singles: [],
@@ -436,6 +470,7 @@ export const ARTISTS_DATA = [
   {
     id: 'pritam',
     name: 'Pritam',
+    aliases: ['pritam', 'pritam da', 'pritam chakraborty', 'pritham'],
     verified: true,
     monthlyListeners: '29,480,000',
     followers: '19,200,000',
@@ -460,25 +495,126 @@ export const ARTISTS_DATA = [
         trackIds: ['yt-BddP6PYo2gs'],
         totalTracks: 6,
         genre: 'Bollywood'
-      },
-      {
-        id: 'album-jawan-pritam',
-        title: 'Jawan',
-        type: 'Album',
-        releaseYear: 2023,
-        coverUrl: 'https://i.ytimg.com/vi/sK7riqg2mr4/hqdefault.jpg',
-        trackIds: ['yt-sK7riqg2mr4'],
-        totalTracks: 7,
-        genre: 'Action'
       }
     ],
     singles: [],
     relatedArtistIds: ['arijit_singh', 'vishal_mishra', 'shreya_ghoshal']
+  },
+
+  {
+    id: 'shreya_ghoshal',
+    name: 'Shreya Ghoshal',
+    aliases: ['shreya', 'shreya ghoshal', 'shreya ghosal', 'shreyaghoshal'],
+    verified: true,
+    monthlyListeners: '25,600,000',
+    followers: '28,100,000',
+    bio: 'Shreya Ghoshal is a legendary Indian singer renowned for her melodic range, classical perfection, and countless cinematic masterpieces in Hindi, Bengali, Tamil, and Telugu cinema.',
+    avatarUrl: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=600&q=80',
+    bannerUrl: 'https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?auto=format&fit=crop&w=1600&q=80',
+    headerColor: '#EC4899',
+    genres: ['Bollywood Classical', 'Romantic', 'Playback'],
+    topTrackIds: ['yt-sK7riqg2mr4', 'yt-BddP6PYo2gs'],
+    albums: [],
+    singles: [],
+    relatedArtistIds: ['arijit_singh', 'pritam', 'alka_yagnik']
+  },
+
+  {
+    id: 'badshah',
+    name: 'Badshah',
+    aliases: ['badshah', 'badshaah', 'aditya prateek singh sisodia'],
+    verified: true,
+    monthlyListeners: '17,400,000',
+    followers: '14,200,000',
+    bio: 'Badshah is an Indian rapper, singer, and music producer known for club anthems, Desi pop bangers, and chartbuster collaborations.',
+    avatarUrl: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=600&q=80',
+    bannerUrl: 'https://images.unsplash.com/photo-1492684223066-81342ee5ff30?auto=format&fit=crop&w=1600&q=80',
+    headerColor: '#F59E0B',
+    genres: ['Desi Hip-Hop', 'Commercial Pop', 'Club'],
+    topTrackIds: ['yt-LK7-_dgAVQE'],
+    albums: [],
+    singles: [],
+    relatedArtistIds: ['karan_aujla', 'diljit_dosanjh']
+  },
+
+  {
+    id: 'jubin_nautiyal',
+    name: 'Jubin Nautiyal',
+    aliases: ['jubin', 'jubin nautiyal', 'zubin', 'jubinnautiyal'],
+    verified: true,
+    monthlyListeners: '21,300,000',
+    followers: '18,500,000',
+    bio: 'Jubin Nautiyal is an Indian playback singer and performer known for his acoustic touch, soul-stirring love songs, and blockbuster film soundtracks.',
+    avatarUrl: 'https://images.unsplash.com/photo-1522075469751-3a6694fb2f61?auto=format&fit=crop&w=600&q=80',
+    bannerUrl: 'https://images.unsplash.com/photo-1470225620780-dba8ba36b745?auto=format&fit=crop&w=1600&q=80',
+    headerColor: '#10B981',
+    genres: ['Bollywood Romantic', 'Acoustic', 'Sufi'],
+    topTrackIds: ['yt-RLzC55ai0eo'],
+    albums: [],
+    singles: [],
+    relatedArtistIds: ['arijit_singh', 'vishal_mishra']
+  },
+
+  {
+    id: 'atif_aslam',
+    name: 'Atif Aslam',
+    aliases: ['atif', 'atif aslam', 'atifaslam'],
+    verified: true,
+    monthlyListeners: '23,100,000',
+    followers: '25,000,000',
+    bio: 'Atif Aslam is an iconic South Asian singer and songwriter renowned for his soaring vocal range, emotive rock ballads, and evergreen Bollywood classics.',
+    avatarUrl: 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&w=600&q=80',
+    bannerUrl: 'https://images.unsplash.com/photo-1501386761578-eac5c94b800a?auto=format&fit=crop&w=1600&q=80',
+    headerColor: '#6366F1',
+    genres: ['Sufi Rock', 'Bollywood Romantic', 'Pop'],
+    topTrackIds: ['yt-BddP6PYo2gs', 'yt-RLzC55ai0eo'],
+    albums: [],
+    singles: [],
+    relatedArtistIds: ['arijit_singh', 'pritam', 'jubin_nautiyal']
   }
 ];
 
 /**
- * Normalizes an artist name for lookup (e.g. "Arijit Singh & Pritam" -> ["arijit singh", "pritam"])
+ * Strips special characters, vowels, and excess spaces for high-tolerance phonetic comparison
+ */
+const normalizeText = (str = '') => {
+  return str.toLowerCase().replace(/[^a-z0-9]/g, '');
+};
+
+/**
+ * Checks if a search query matches an artist name or their common aliases/misspellings
+ */
+export const checkArtistQueryMatch = (query = '', artist) => {
+  if (!query || !artist) return false;
+  const cleanQ = normalizeText(query);
+  const cleanName = normalizeText(artist.name);
+
+  if (cleanName.includes(cleanQ) || cleanQ.includes(cleanName)) return true;
+
+  // Direct word containment (e.g. "singh" or "arijit" in "Arijit Singh")
+  const queryTokens = query.toLowerCase().split(/\s+/).filter((t) => t.length >= 3);
+  const nameTokens = artist.name.toLowerCase().split(/\s+/);
+  if (queryTokens.some((qt) => nameTokens.some((nt) => nt.includes(qt) || qt.includes(nt)))) {
+    return true;
+  }
+
+  // Check aliases (like 'arjit singh', 'arjit', 'diljeet', 'moosewala')
+  if (Array.isArray(artist.aliases)) {
+    return artist.aliases.some((alias) => {
+      const cleanAlias = normalizeText(alias);
+      return (
+        cleanAlias === cleanQ ||
+        cleanAlias.includes(cleanQ) ||
+        cleanQ.includes(cleanAlias)
+      );
+    });
+  }
+
+  return false;
+};
+
+/**
+ * Normalizes an artist name for lookup
  */
 export const normalizeArtistKey = (name = '') => {
   return name
@@ -490,24 +626,25 @@ export const normalizeArtistKey = (name = '') => {
 
 /**
  * Finds or synthesizes an Artist Profile object
- * @param {string} artistIdOrName 
+ * @param {string|Object} artistIdOrName 
  * @param {Array} additionalTracks - Optional live search tracks by this artist
  * @returns {Object} Comprehensive Spotify-like artist profile
  */
 export const getArtistProfile = (artistIdOrName, additionalTracks = []) => {
   if (!artistIdOrName) return null;
 
-  const raw = String(artistIdOrName).trim();
+  const raw = typeof artistIdOrName === 'object' 
+    ? (artistIdOrName.name || artistIdOrName.artist || '') 
+    : String(artistIdOrName).trim();
   const lower = raw.toLowerCase();
   const cleanKey = normalizeArtistKey(raw);
 
-  // 1. Direct match in curated database
+  // 1. Direct or alias match in curated database
   const found = ARTISTS_DATA.find((a) => {
     return (
       a.id.toLowerCase() === lower ||
       a.name.toLowerCase() === lower ||
-      lower.includes(a.name.toLowerCase()) ||
-      a.name.toLowerCase().includes(lower)
+      checkArtistQueryMatch(raw, a)
     );
   });
 
@@ -521,7 +658,11 @@ export const getArtistProfile = (artistIdOrName, additionalTracks = []) => {
     if (!t || !t.artist) return false;
     const tArtist = t.artist.toLowerCase();
     const searchTarget = found ? found.name.toLowerCase() : lower;
-    return tArtist.includes(searchTarget) || searchTarget.includes(tArtist);
+    return (
+      tArtist.includes(searchTarget) || 
+      searchTarget.includes(tArtist) ||
+      (found && checkArtistQueryMatch(t.artist, found))
+    );
   });
 
   // Deduplicate tracks by id or title
@@ -709,19 +850,52 @@ export const getAlbumData = (albumIdOrTitle, artistName = '') => {
 };
 
 /**
- * Searches across curated artists and albums
+ * Searches across curated artists, aliases, albums, and live search tracks
  */
-export const searchArtistsAndAlbums = (query = '') => {
+export const searchArtistsAndAlbums = (query = '', liveTracks = []) => {
   if (!query || typeof query !== 'string') return { artists: [], albums: [] };
   const cleanQ = query.trim().toLowerCase();
 
+  // 1. Find direct curated matches with aliases and fuzzy token matching
   const matchingArtists = ARTISTS_DATA.filter((a) => {
-    return (
-      a.name.toLowerCase().includes(cleanQ) ||
-      a.genres.some((g) => g.toLowerCase().includes(cleanQ))
-    );
+    return checkArtistQueryMatch(cleanQ, a);
   });
 
+  // 2. Scan liveTracks from YouTube/Backend for artist mentions
+  if (Array.isArray(liveTracks) && liveTracks.length > 0) {
+    liveTracks.forEach((track) => {
+      if (!track || !track.artist) return;
+      const rawArtist = track.artist.trim();
+      
+      // Filter out record label channels like T-Series, Zee Music, etc.
+      const lowerArtist = rawArtist.toLowerCase();
+      const isRecordLabel = [
+        't-series', 'tseries', 'sony music', 'zee music', 
+        'speed records', 'yrf', 'tips official', 'eros now', 'saregama'
+      ].some((label) => lowerArtist.includes(label));
+
+      if (isRecordLabel) return;
+
+      // Check if this artist in liveTracks matches an entry in ARTISTS_DATA
+      const existing = ARTISTS_DATA.find((a) => checkArtistQueryMatch(rawArtist, a));
+      if (existing) {
+        if (!matchingArtists.some((ma) => ma.id === existing.id)) {
+          matchingArtists.push(existing);
+        }
+      } else if (
+        rawArtist.toLowerCase().includes(cleanQ) || 
+        cleanQ.includes(rawArtist.toLowerCase())
+      ) {
+        // Synthesize dynamic profile for this live track artist
+        const dynProfile = getArtistProfile(rawArtist, liveTracks);
+        if (dynProfile && !matchingArtists.some((ma) => ma.name.toLowerCase() === dynProfile.name.toLowerCase())) {
+          matchingArtists.push(dynProfile);
+        }
+      }
+    });
+  }
+
+  // 3. Find matching albums
   const matchingAlbums = [];
   ARTISTS_DATA.forEach((artist) => {
     const releases = [...(artist.albums || []), ...(artist.singles || [])];
