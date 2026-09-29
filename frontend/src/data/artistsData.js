@@ -654,6 +654,38 @@ export const ARTISTS_DATA = [
       "jubin_nautiyal"
     ]
   }
+,
+
+  {
+    "id": "darshan_raval",
+    "name": "Darshan Raval",
+    "aliases": [
+      "darshan raval",
+      "darshan",
+      "darshan rawal"
+    ],
+    "verified": true,
+    "monthlyListeners": "15,800,000",
+    "followers": "12,900,000",
+    "bio": "Darshan Raval is an Indian singer, composer, and lyricist renowned for monsoon romantic anthems and indie pop chartbusters.",
+    "avatarUrl": "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=600&q=80",
+    "bannerUrl": "https://images.unsplash.com/photo-1501386761578-eac5c94b800a?auto=format&fit=crop&w=1600&q=80",
+    "headerColor": "#4338CA",
+    "genres": [
+      "Indie Pop",
+      "Romantic",
+      "Acoustic"
+    ],
+    "topTrackIds": [
+      "yt-AFTIVN8rRbI"
+    ],
+    "albums": [],
+    "singles": [],
+    "relatedArtistIds": [
+      "arijit_singh",
+      "jubin_nautiyal"
+    ]
+  }
 ];
 
 /**
